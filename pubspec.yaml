@@ -1,0 +1,33 @@
+name: flutter_pi_2
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 9.0.1+9
+
+environment:
+  sdk: ^3.1.1
+
+dependencies:
+  change_app_package_name: ^1.2.0
+  english_words: ^4.0.0
+  flash: ^3.1.1
+  flutter:
+    sdk: flutter
+  flutter_reactive_ble: ^5.3.1
+  gif: ^2.3.0
+  permission_handler: ^11.3.1
+  provider: ^6.0.0
+  url_launcher: ^6.3.0
+  uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/croppedlogo.png
+    - assets/images/heartrate.gif
