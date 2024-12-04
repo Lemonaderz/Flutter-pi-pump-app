@@ -53,10 +53,18 @@ class MyAppState extends ChangeNotifier {
 // These are the UUIDs of your device
   final Uuid serviceUuid = Uuid.parse("00000001-710e-4a5b-8d75-3e5b444bc3cf");
   
-  final Uuid characteristicUuid = Uuid.parse("00000002-710e-4a5b-8d75-3e5b444bc3cf");
+  final Uuid characteristicUuid = Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf");
   final Uuid strengthUuid = Uuid.parse("00000004-710e-4a5b-8d75-3e5b444bc3cf");
   String current = "Ready";
   List<Uuid> discoveredCharacteristic = [];   
+
+
+  void Connect() async
+  {
+    await Future.delayed(const Duration(seconds: 7));
+    current = "Connected";
+  }
+
   void getNext(var data) {
     if (scanning == 'Scanning....')
     {
@@ -66,10 +74,12 @@ class MyAppState extends ChangeNotifier {
     else{
       current = data;
       if (_connected){
-        current = "Connected";
+        Connect();
       }
         
     }
+  
+  
       
     notifyListeners();
   }
@@ -78,33 +88,20 @@ class MyAppState extends ChangeNotifier {
     final response = await flutterReactiveBle.readCharacteristic(characteristic);
     print(response);
   }
-  void changeReading(String deviceId) async{
-    if (_connected){
-      if (celsius){
-        final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
-        await flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [0x63]); 
-        celsius = false;
-
-      }
-      else{
-        final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
-        await flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [0x66]);  
-        celsius = true;
-
-
-      }
-    }
-  }
+  
   void changeStrength(String deviceId, int strength) async {
     if (_connected){
       final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: strengthUuid, deviceId: deviceId);
-      flutterReactiveBle.writeCharacteristicWithoutResponse(writeCharacteristic, value: [strength]);
+      print(flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [strength]));
     }
   }
   void changeSpeed(String  deviceId, int speed) async {
     if (_connected){
       final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
-        flutterReactiveBle.writeCharacteristicWithoutResponse(writeCharacteristic, value: [speed]);
+      print(writeCharacteristic);
+      flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [speed]);
+      
+
     }
     if (speed > 0){
       _fps = 60;
@@ -135,12 +132,7 @@ class MyAppState extends ChangeNotifier {
     final characteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId);
     getNext("Connected");
     _connected = true;
-    flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
-      
-      
-    }, onError: (dynamic error) {
-      // code to handle errors
-    });
+
     
   }
   void startScan() async{
