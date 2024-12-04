@@ -16,6 +16,7 @@ String scanning = 'Scanning...';
 int _fps = 5;
 void main() {
   runApp(MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
@@ -58,7 +59,21 @@ class MyAppState extends ChangeNotifier {
   String current = "Ready";
   List<Uuid> discoveredCharacteristic = [];   
 
+Future<void> requestPermission() async {
+  print("Doing my job");
 
+  Map<Permission, PermissionStatus> status = await [
+    Permission.locationWhenInUse,
+    Permission.nearbyWifiDevices,
+    Permission.bluetoothScan,
+    Permission.bluetoothAdvertise,
+    Permission.bluetoothConnect,
+    Permission.bluetooth
+  ].request();
+
+
+ 
+}
   void Connect() async
   {
     await Future.delayed(const Duration(seconds: 7));
@@ -119,7 +134,7 @@ class MyAppState extends ChangeNotifier {
   void _launchURL(String url) async {
   await launch(url);
 }
-  
+
 
 
 
@@ -225,6 +240,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    appState.requestPermission();
     return Scaffold(
       body: Center(
         child: Column(
@@ -235,6 +251,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             SizedBox(height: 10),
             ElevatedButton( 
             onPressed: (){
+              
               if (appState.currentlyScanning | appState._connected)
               {
                 String title = "Currently Scanning";
