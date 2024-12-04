@@ -221,6 +221,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   backgroundController = GifController(vsync: this);
   }
 
+  @override
   Widget build(BuildContext context) {
     
     var appState = context.watch<MyAppState>();
@@ -254,8 +255,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 side: BorderSide(),
                               ),
                               contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
-                              title: Text('$title'),
-                              content: Text('$content'),
+                              title: Text(title),
+                              content: Text(content),
                               actions: [
                                 TextButton(
                                   onPressed: controller.dismiss,
