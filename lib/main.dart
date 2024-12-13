@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
@@ -46,12 +47,14 @@ class MyAppState extends ChangeNotifier {
   bool celsius = false;
   bool stop_scanning = false;
   bool currentlyScanning = false;
+  bool requested_permissions = false;
 // Bluetooth related variables
   final flutterReactiveBle = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> _scanStream;
   late QualifiedCharacteristic _rxCharacteristic;
   late StreamSubscription _connect;
 // These are the UUIDs of your device
+
   final Uuid serviceUuid = Uuid.parse("00000001-710e-4a5b-8d75-3e5b444bc3cf");
   
   final Uuid characteristicUuid = Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf");
@@ -60,16 +63,21 @@ class MyAppState extends ChangeNotifier {
   List<Uuid> discoveredCharacteristic = [];   
 
 Future<void> requestPermission() async {
-  print("Doing my job");
-
-  Map<Permission, PermissionStatus> status = await [
-    Permission.locationWhenInUse,
-    Permission.nearbyWifiDevices,
-    Permission.bluetoothScan,
-    Permission.bluetoothAdvertise,
-    Permission.bluetoothConnect,
-    Permission.bluetooth
-  ].request();
+  if (!requested_permissions)
+  {
+    Map<Permission, PermissionStatus> status = await [
+      Permission.locationWhenInUse,
+      Permission.nearbyWifiDevices,
+      Permission.bluetoothScan,
+      Permission.bluetoothAdvertise,
+      Permission.bluetoothConnect,
+      Permission.bluetooth
+    ].request();
+    print("perms requested");
+    requested_permissions = true;
+  }
+  
+  
 
 
  
@@ -112,7 +120,7 @@ Future<void> requestPermission() async {
   }
   void changeSpeed(String  deviceId, int speed) async {
     if (_connected){
-      final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
+      final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId); 
       print(writeCharacteristic);
       flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [speed]);
       
@@ -141,10 +149,15 @@ Future<void> requestPermission() async {
   void discoverPiServices(String deviceId) async {
     await Future.delayed(const Duration(seconds: 1));
     _scanStream.cancel();
+    flutterReactiveBle.discoverAllServices(deviceId);
+    print("services");
+    print(flutterReactiveBle.getDiscoveredServices(deviceId));
     discoveredCharacteristic = [];
     List<Uuid> characteristicIds = [];
     final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
     final characteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId);
+    print(characteristic);
+    await Future.delayed(const Duration(seconds: 3));
     getNext("Connected");
     _connected = true;
 
@@ -174,6 +187,7 @@ Future<void> requestPermission() async {
         await Future.delayed(const Duration(seconds: 1));
         _ubiqueDevice = device;
         _foundDeviceWaitingToConnect = true;
+
         flutterReactiveBle.connectToDevice(
         id: device.id,
         servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
@@ -186,12 +200,22 @@ Future<void> requestPermission() async {
             discoverDevices();
           }
           else{
+
             print(connectionState.connectionState);
+            if (connectionState.connectionState == DeviceConnectionState.disconnected)
+            {
+                flutterReactiveBle.connectToDevice(
+          id: device.id,
+          servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
+          connectionTimeout: const Duration(seconds: 1),
+                  );
+
+            }
             _scanStream.cancel();
             stop_scanning = true;
             currentlyScanning = false;
-            await Future.delayed(const Duration(seconds: 1));
             getNext('Connecting');
+            
             discoverPiServices(device.id);
             print("$device");
           }
