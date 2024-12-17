@@ -337,6 +337,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               width: 240, // <-- TextField width
 
             child: TextField(
+              onTapOutside: (event){
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
                 controller: textController,
                  decoration: InputDecoration(labelText: "Enter Heart Rate"),
                  keyboardType: TextInputType.number,
