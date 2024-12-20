@@ -34,7 +34,7 @@ class LandingPage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const MyApp()),
+    MaterialPageRoute(builder: (context) => const PulseApp()),
           );
           },
         ),ElevatedButton(
@@ -42,7 +42,7 @@ class LandingPage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const MyApp()),
+    MaterialPageRoute(builder: (context) => const VentApp()),
           );
           },
         ),],)
@@ -54,8 +54,8 @@ class LandingPage extends StatelessWidget {
   }
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PulseApp extends StatelessWidget {
+  const PulseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +63,32 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Namer App',
+        title: 'Pulse App',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         ),
         home: MyHomePage(title: "Actuator Control"),
+      ),
+    );
+  }
+}
+
+class VentApp extends StatelessWidget {
+  const VentApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Vent App',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        ),
+        home: MyVentPage(title: "Actuator Control"),
       ),
     );
   }
@@ -726,6 +746,399 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
+class MyVentPage extends StatefulWidget {
+  const MyVentPage({super.key, required this.title});
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked 'final'.
+
+  final String title;
+
+  @override
+  State<MyVentPage> createState() => _MyVentPageState();
+}
+class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
+  TextEditingController textController = TextEditingController();
+  late final GifController backgroundController;
+  late int displayText;
+  @override
+  void initState() {
+  super.initState();
+  backgroundController = GifController(vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+    appState.requestPermission();
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/croppedlogo.png',fit: BoxFit.cover,),
+            BigCard(pair: pair),
+            SizedBox(height: 10),
+            ElevatedButton( 
+            onPressed: (){
+              
+              if (appState.currentlyScanning | appState._connected)
+              {
+                String title = "Currently Scanning";
+                String content = "Already scanning.";
+                if (appState._connected)
+                {
+                  String title = "Already Connected";
+                  String content = "Device Already connected. If errors persist please restart the application.";
+                }
+                context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text(title),
+                              content: Text(content),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+              
+              }
+              else{
+                appState.getNext("Beginning");
+                appState.discoverDevices();
+              }
+              
+
+              },
+            child: Text('Scan'),
+            ),
+            SizedBox(
+                    width: 240,
+                    height:100,
+                    child: Gif( 
+                        fps: _fps,
+                        autostart: Autostart.once,
+                        placeholder: (context) =>
+                            const Center(child: CircularProgressIndicator()),
+                        image: AssetImage('assets/images/lung.gif'),
+                       onFetchCompleted: () {
+                        
+                        
+                      },
+                    ),
+                ),
+            SizedBox(
+              width: 240, // <-- TextField width
+
+            child: TextField(
+                controller: textController,
+                 decoration: InputDecoration(labelText: "Enter Respiratory Rate"),
+                 keyboardType: TextInputType.number,
+                 inputFormatters: <TextInputFormatter>[
+                   FilteringTextInputFormatter.digitsOnly],
+                 
+            ),
+            ),
+
+            ElevatedButton( 
+            onPressed: (){
+              try {
+               displayText = int.parse(textController.text);
+               appState.changeSpeed(_ubiqueDevice.id, displayText);
+              } on FormatException 
+              {
+                context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Input Issue'),
+                              content: Text('Please only input numbers from 0-30.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+              }
+              catch(e)
+              {
+                context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+              
+              }
+              },
+            child: Text('Enter Respiratory Rate'),
+            ),Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                    ElevatedButton(
+                    onPressed: () {
+                      if (appState._connected)
+                      {
+                        appState.changeSpeed(_ubiqueDevice.id, 10);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before respiratory heart rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text('10')),
+                ElevatedButton(
+                    onPressed: () {
+                     if (appState._connected)
+                      {
+                        appState.changeSpeed(_ubiqueDevice.id, 16);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text('16')),
+                ElevatedButton(
+                    onPressed: () {
+                     if (appState._connected)
+                      {
+                        appState.changeSpeed(_ubiqueDevice.id, 20);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text('20')),
+              ],
+            ), 
+            SizedBox(
+              width: 400,
+              child: 
+            ListView(
+              shrinkWrap: true, //just set this property
+              padding: const EdgeInsets.all(8.0),
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                                  
+                    ElevatedButton(
+                    onPressed: () {
+                      if (appState._connected)
+                      {
+                        appState.changeSpeed(_ubiqueDevice.id, 0);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      
+                    },
+                    child: Text('Apnoea')),
+                ElevatedButton(
+                    onPressed: () {
+                      if (appState._connected)
+                      {
+                        appState.changeStrength(_ubiqueDevice.id, 1);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text('Shallow')),
+                ElevatedButton(
+                    onPressed: () {
+                      if (appState._connected)
+                      {
+                        appState.changeStrength(_ubiqueDevice.id, 0);
+                      }
+                      else
+                      {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Not Connected'),
+                              content: Text('Please connect before modifying respiratory rate.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      
+                    },
+                    child: Text('Normal')),
+                    
+                    
+              ],
+            ),),
+            
+            ElevatedButton(
+                    onPressed: () {
+                      appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
+                    },
+                    child: Text('Report Issue')),
+          ],
+        ),
+      ),
+    );
+  }
+}
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
