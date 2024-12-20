@@ -15,8 +15,43 @@ late DiscoveredDevice _ubiqueDevice;
 String scanning = 'Scanning...';
 int _fps = 5;
 void main() {
-  runApp(MyApp());
+  runApp(const MaterialApp(
+    home: LandingPage()
+  ));
   
+}
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Route'),
+      ),
+      body: Center(
+        child: Column(children: [ElevatedButton(
+          child: const Text('Pulse App'),
+          onPressed: () {
+            Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const MyApp()),
+          );
+          },
+        ),ElevatedButton(
+          child: const Text('Vent App'),
+          onPressed: () {
+            Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const MyApp()),
+          );
+          },
+        ),],)
+        
+        
+        
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
