@@ -31,3 +31,6 @@ flutter:
   assets:
     - assets/images/croppedlogo.png
     - assets/images/heartrate.gif
+    - assets/images/lung.gif
+    - assets/images/giphy.webp
+    - assets/images/lung2.webp

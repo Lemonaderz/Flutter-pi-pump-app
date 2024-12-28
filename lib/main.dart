@@ -15,8 +15,12 @@ late DiscoveredDevice _ubiqueDevice;
 String scanning = 'Scanning...';
 int _fps = 5;
 void main() {
-  runApp(const MaterialApp(
-    home: LandingPage()
+  runApp(MaterialApp(
+    home: LandingPage(), 
+    theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        ),
   ));
   
 }
@@ -25,11 +29,14 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('First Route'),
-      ),
       body: Center(
-        child: Column(children: [ElevatedButton(
+        child: Column(
+
+          children: [
+            SizedBox(height: 45),
+            Image.asset('assets/images/croppedlogo.png',fit: BoxFit.cover),
+            SizedBox(height: 75),
+            SizedBox(height: 150, width: 150, child:ElevatedButton(
           child: const Text('Pulse App'),
           onPressed: () {
             Navigator.push(
@@ -37,15 +44,25 @@ class LandingPage extends StatelessWidget {
     MaterialPageRoute(builder: (context) => const PulseApp()),
           );
           },
-        ),ElevatedButton(
+          
+        ))
+            ,SizedBox(height: 75),
+        SizedBox(
+          height: 150,
+          width: 150,
+          child:
+        ElevatedButton(
           child: const Text('Vent App'),
           onPressed: () {
             Navigator.push(
+              
     context,
+    
     MaterialPageRoute(builder: (context) => const VentApp()),
           );
           },
-        ),],)
+        ), )
+        ],)
         
         
         
@@ -64,11 +81,11 @@ class PulseApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Pulse App',
-        theme: ThemeData(
+        home: MyHomePage(title: "Actuator Control"),
+         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: MyHomePage(title: "Actuator Control"),
+        )
       ),
     );
   }
@@ -84,11 +101,11 @@ class VentApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Vent App',
-        theme: ThemeData(
+        home: MyVentPage(title: "Actuator Control"),
+         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: MyVentPage(title: "Actuator Control"),
+        )
       ),
     );
   }
@@ -739,7 +756,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
                     },
                     child: Text('Report Issue')),
-          ],
+          ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                    },
+                    child: Text('Back')),],
         ),
       ),
     );
@@ -834,16 +855,10 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
             SizedBox(
                     width: 240,
                     height:100,
-                    child: Gif( 
-                        fps: _fps,
-                        autostart: Autostart.once,
-                        placeholder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
-                        image: AssetImage('assets/images/lung.gif'),
-                       onFetchCompleted: () {
-                        
-                        
-                      },
+                    child: Image( 
+
+                        image: AssetImage('assets/images/lung2.webp'),
+                       
                     ),
                 ),
             SizedBox(
@@ -1133,6 +1148,11 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
                       appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
                     },
                     child: Text('Report Issue')),
+           ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                    },
+                    child: Text('Back')),
           ],
         ),
       ),
