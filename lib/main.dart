@@ -39,11 +39,19 @@ class LandingPage extends StatelessWidget {
             SizedBox(height: 150, width: 150, child:ElevatedButton(
           child: const Text('Pulse App'),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => const PulseApp()),
           );
-          },
+          },style: ButtonStyle(
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              )
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade50)
+          )
+
           
         ))
             ,SizedBox(height: 75),
@@ -54,13 +62,21 @@ class LandingPage extends StatelessWidget {
         ElevatedButton(
           child: const Text('Vent App'),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               
     context,
     
     MaterialPageRoute(builder: (context) => const VentApp()),
           );
           },
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              )
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade50)
+          )
         ), )
         ],)
         
@@ -124,15 +140,17 @@ class MyAppState extends ChangeNotifier {
   final flutterReactiveBle = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> _scanStream;
   late QualifiedCharacteristic _rxCharacteristic;
-  late StreamSubscription _connect;
+  late StreamSubscription<ConnectionStateUpdate> _connect;
 // These are the UUIDs of your device
-
+  late Stream<ConnectionStateUpdate> _connectionStream;
   final Uuid serviceUuid = Uuid.parse("00000001-710e-4a5b-8d75-3e5b444bc3cf");
   
   final Uuid characteristicUuid = Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf");
   final Uuid strengthUuid = Uuid.parse("00000004-710e-4a5b-8d75-3e5b444bc3cf");
   String current = "Ready";
   List<Uuid> discoveredCharacteristic = [];   
+
+
 
 Future<void> requestPermission() async {
   if (!requested_permissions)
@@ -161,18 +179,21 @@ Future<void> requestPermission() async {
   }
 
   void getNext(var data) {
-    if (scanning == 'Scanning....')
-    {
-      scanning ='Scanning';
-      current = scanning;
-    }
-    else{
-      current = data;
-      if (_connected){
-        Connect();
+
+      if (scanning == 'Scanning....')
+      {
+        scanning ='Scanning';
+        current = scanning;
       }
-        
-    }
+      else{
+        current = data;
+        if (_connected){
+          current = "Connecting";
+          Connect();
+        }
+          
+      }
+  
   
   
       
@@ -192,9 +213,17 @@ Future<void> requestPermission() async {
   }
   void changeSpeed(String  deviceId, int speed) async {
     if (_connected){
+      try{
       final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId); 
       print(writeCharacteristic);
       flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [speed]);
+
+      }
+      catch(e)
+      {
+        print("error");
+      }
+      
       
 
     }
@@ -219,17 +248,12 @@ Future<void> requestPermission() async {
 
 
   void discoverPiServices(String deviceId) async {
+    getNext('Connecting');
     await Future.delayed(const Duration(seconds: 1));
     _scanStream.cancel();
-    flutterReactiveBle.discoverAllServices(deviceId);
-    print("services");
-    print(flutterReactiveBle.getDiscoveredServices(deviceId));
-    discoveredCharacteristic = [];
-    List<Uuid> characteristicIds = [];
-    final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: Uuid.parse("00000003-710e-4a5b-8d75-3e5b444bc3cf"), deviceId: deviceId); 
-    final characteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId);
-    print(characteristic);
-    await Future.delayed(const Duration(seconds: 3));
+   
+    stop_scanning = true;
+    await Future.delayed(const Duration(seconds: 7));
     getNext("Connected");
     _connected = true;
 
@@ -252,6 +276,9 @@ Future<void> requestPermission() async {
     startScan();
     currentlyScanning = true;
     List<String> mList = ['Thermometer'];   
+    try{
+
+    
     _scanStream = flutterReactiveBle.scanForDevices(   withServices: [], scanMode: ScanMode.lowLatency).listen((device) async {
       print('scanning');
       if (mList.contains(device.name))
@@ -271,26 +298,36 @@ Future<void> requestPermission() async {
             print("disconnected");
             discoverDevices();
           }
+        
           else{
 
             print(connectionState.connectionState);
             if (connectionState.connectionState == DeviceConnectionState.disconnected)
             {
-                flutterReactiveBle.connectToDevice(
-          id: device.id,
-          servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
-          connectionTimeout: const Duration(seconds: 1),
+              
+              flutterReactiveBle.connectToDevice(
+              id: device.id,
+              servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
+              connectionTimeout: const Duration(seconds: 1),
                   );
 
+              print("id");
+              
+              
+
+
             }
+
+            
             _scanStream.cancel();
             stop_scanning = true;
             currentlyScanning = false;
             getNext('Connecting');
-            
+          
             discoverPiServices(device.id);
             print("$device");
           }
+
         }, onError: (Object error) {
           // Handle a possible error
         });
@@ -298,8 +335,45 @@ Future<void> requestPermission() async {
     }, onError: (Object e) {
       print("error: $e");
     });
+    }
+    catch(e)
+    {
+      print(e);
+    }
 
 
+  }
+  void reset()
+  async {
+    print("reset");
+    try{
+    _scanStream.cancel();
+    }
+    catch(e)
+    {
+      print(e);
+    }
+    
+    stop_scanning = true;
+    if(_connected)
+    {
+
+      changeSpeed(_ubiqueDevice.id, -1);
+    }
+    else
+    {
+      try
+      {
+        await Future.delayed(const Duration(seconds: 7));
+        changeSpeed(_ubiqueDevice.id, -1);
+
+      }
+      catch(exception)
+      {
+        print(exception);
+        
+      }
+    }
   }
 
   
@@ -762,6 +836,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                      appState.reset();
                     },
                     child: Text('Back')),],
         ),
@@ -1154,6 +1229,7 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
            ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                      appState.reset();
                     },
                     child: Text('Back')),
           ],
