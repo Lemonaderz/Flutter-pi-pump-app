@@ -7,9 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:gif/gif.dart';
 import 'package:flash/flash.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_mjpeg/flutter_mjpeg.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:wifi_iot/wifi_iot.dart';
+
 
 late DiscoveredDevice _ubiqueDevice;
 String scanning = 'Scanning...';
@@ -33,9 +38,9 @@ class LandingPage extends StatelessWidget {
         child: Column(
 
           children: [
-            SizedBox(height: 45),
+            SizedBox(height: 05),
             Image.asset('assets/images/croppedlogo.png',fit: BoxFit.cover),
-            SizedBox(height: 75),
+            SizedBox(height: 65),
             SizedBox(height: 150, width: 150, child:ElevatedButton(
           child: const Text('Pulse App'),
           onPressed: () {
@@ -54,7 +59,7 @@ class LandingPage extends StatelessWidget {
 
           
         ))
-            ,SizedBox(height: 75),
+            ,SizedBox(height: 25),
         SizedBox(
           height: 150,
           width: 150,
@@ -77,7 +82,27 @@ class LandingPage extends StatelessWidget {
             ),
             backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade50)
           )
-        ), )
+        ), ),
+
+        SizedBox(height: 25),
+        SizedBox(height: 150, width: 150, child:ElevatedButton(
+          child: const Text('Laryngoscope Video'),
+          onPressed: () {
+            Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const LaryngApp()),
+          );
+          },style: ButtonStyle(
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              )
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade50)
+          )
+
+          
+        ))
         ],)
         
         
@@ -127,6 +152,27 @@ class VentApp extends StatelessWidget {
   }
 }
 
+class LaryngApp extends StatelessWidget {
+  const LaryngApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Laryngoscope Video',
+        home: MyLaryngPage(title: "Actuator Control"),
+         theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        )
+      ),
+    );
+  }
+}
+
+
 class MyAppState extends ChangeNotifier {
   // Some state management stuff
   bool _foundDeviceWaitingToConnect = false;
@@ -136,6 +182,7 @@ class MyAppState extends ChangeNotifier {
   bool stop_scanning = false;
   bool currentlyScanning = false;
   bool requested_permissions = false;
+  bool stop_check = false;
 // Bluetooth related variables
   final flutterReactiveBle = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> _scanStream;
@@ -376,6 +423,37 @@ Future<void> requestPermission() async {
     }
   }
 
+
+  void run_check(WebViewController webview) async
+  {
+    if (!stop_check)
+    {
+      
+    
+    if ("SIM3D" != await WiFiForIoTPlugin.getSSID())
+    {
+      current = "Not Connected";
+    }
+    else{
+      if(current == "Not Connected")
+      {
+      await Future.delayed(const Duration(seconds: 3));
+       webview.reload();
+       await Future.delayed(const Duration(seconds: 1));
+       webview.reload();
+       
+      }
+      current ="Connected";
+
+    }
+
+    
+    notifyListeners();
+    
+    await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+  
   
 }
 
@@ -398,12 +476,10 @@ class MyHomePage extends StatefulWidget {
 }
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   TextEditingController textController = TextEditingController();
-  late final GifController backgroundController;
   late int displayText;
   @override
   void initState() {
   super.initState();
-  backgroundController = GifController(vsync: this);
   }
 
   @override
@@ -467,18 +543,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             SizedBox(
                     width: 240,
                     height:100,
-                    child: Gif( 
-                        fps: _fps,
-                        autostart: Autostart.once,
-                        placeholder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
-                        image: AssetImage('assets/images/heartrate.gif'),
-                       onFetchCompleted: () {
-                        backgroundController.repeat(period: Duration(seconds: 1));
-                        
-                      },
+                    child: Image.asset('assets/images/heartrate.gif')
                     ),
-                ),
+                
             SizedBox(
               width: 240, // <-- TextField width
 
@@ -845,6 +912,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
+
 class MyVentPage extends StatefulWidget {
   const MyVentPage({super.key, required this.title});
 
@@ -864,12 +932,10 @@ class MyVentPage extends StatefulWidget {
 }
 class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
   TextEditingController textController = TextEditingController();
-  late final GifController backgroundController;
   late int displayText;
   @override
   void initState() {
   super.initState();
-  backgroundController = GifController(vsync: this);
   }
 
   @override
@@ -1235,6 +1301,159 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MyLaryngPage extends StatefulWidget {
+  const MyLaryngPage({super.key, required this.title});
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked 'final'.
+
+  final String title;
+
+  @override
+  State<MyLaryngPage> createState() => _MyLaryngPageState();
+}
+class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMixin {
+  TextEditingController textController = TextEditingController();
+  late VlcPlayerController _videoPlayerController;
+  late int displayText;
+  late WebViewController _controller;
+   bool _isEnabled = false;
+  bool _isConnected = false;
+  bool _isWiFiAPEnabled = false;
+  bool _isWiFiAPSSIDHidden = false;
+  bool _isWifiAPSupported = true;
+  bool _isWifiEnableOpenSettings = false;
+  bool _isWifiDisableOpenSettings = false;
+  @override
+  void initState() {
+    
+     _videoPlayerController = VlcPlayerController.network(
+      'http://192.168.0.75:8081/',
+      hwAcc: HwAcc.disabled,
+      options: VlcPlayerOptions(
+        http: VlcHttpOptions([  VlcHttpOptions.httpContinuous(true)  
+                ],),
+        rtp: VlcRtpOptions([VlcRtpOptions.rtpOverRtsp(true)],),
+        advanced:  VlcAdvancedOptions([ VlcAdvancedOptions.networkCaching(30)],),
+      ),
+      
+    );
+
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('http://192.168.0.1:8081')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('http://192.168.0.1:8081'));
+    // #enddocregion webview_controller
+
+  super.initState();
+  }
+  void dispose() async {
+    super.dispose();
+    await _videoPlayerController.stopRendererScanning();
+  }
+
+  void intiWifi() async
+  {
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+    appState.stop_check = false;
+    appState.run_check(_controller);
+    return Scaffold(
+      
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+           Image.asset('assets/images/croppedlogo.png',fit: BoxFit.fitHeight,),
+           SizedBox(height: 10),
+            BigCard(pair: pair),
+            Expanded( child: Center( child:
+             Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 2,
+              
+            ),
+          ),
+          // child: VlcPlayer(
+          //   controller: _videoPlayerController,
+          //   aspectRatio: 12 / 9,
+          //   placeholder: Center(child: CircularProgressIndicator())) ,
+//           child: Mjpeg(
+//   stream: 'http://192.168.0.75/', isLive: true, timeout: const Duration(seconds: 60),
+// )
+        child: WebViewWidget(controller: _controller),
+        ), 
+            ),
+            ),
+
+            ElevatedButton(
+                    onPressed: () {
+                        context.showFlash(barrierColor: Colors.black54,
+                          barrierDismissible: true,
+                          builder: (context, controller) => FadeTransition(
+                            opacity: controller.controller,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                side: BorderSide(),
+                              ),
+                              contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
+                              title: Text('Connection Guide'),
+                              content: Text('Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Larngoscope startup'),
+                              actions: [
+                                TextButton(
+                                  onPressed: controller.dismiss,
+                                  child: Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                    },
+                    child: Text('How to connect'),),
+            ElevatedButton(
+                    onPressed: () {
+                      appState.stop_check = true;
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                    },
+                    child: Text('Back')),
+
+            
+                    
+             ]
+      ),
+      
     );
   }
 }

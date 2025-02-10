@@ -4,6 +4,7 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -73,13 +74,21 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Need location when in use to connect using Bluetooth to the pump.</string>
 	
-
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 
     <!-- Permission options for the `assistant` group -->
     <key>NSSiriUsageDescription</key>
     <string>Permission Request Package needs reference.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>com.apple.developer.networking.wifi-info</key>
+    <true/>
+	<key>com.apple.developer.networking.HotspotConfiguration</key>
+    <true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
