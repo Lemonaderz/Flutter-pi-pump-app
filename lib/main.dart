@@ -86,7 +86,7 @@ class LandingPage extends StatelessWidget {
 
         SizedBox(height: 25),
         SizedBox(height: 150, width: 150, child:ElevatedButton(
-          child: const Text('Laryngoscope Video'),
+          child: const Text('Video Laryngoscope'),
           onPressed: () {
             Navigator.pushReplacement(
     context,
