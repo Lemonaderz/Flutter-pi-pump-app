@@ -1361,9 +1361,6 @@ class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMix
           onHttpError: (HttpResponseError error) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('http://192.168.0.1:8081')) {
-              return NavigationDecision.prevent;
-            }
             return NavigationDecision.navigate;
           },
         ),
@@ -1397,7 +1394,8 @@ class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMix
            Image.asset('assets/images/croppedlogo.png',fit: BoxFit.fitHeight,),
            SizedBox(height: 10),
             BigCard(pair: pair),
-            Expanded( child: Center( child:
+            Expanded( child:  Center()),
+            Expanded( child:  Center( child:
              Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -1416,7 +1414,7 @@ class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMix
         ), 
             ),
             ),
-
+            Expanded( child:  Center()),
             ElevatedButton(
                     onPressed: () {
                         context.showFlash(barrierColor: Colors.black54,
@@ -1430,7 +1428,7 @@ class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMix
                               ),
                               contentPadding: EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0, bottom: 16.0),
                               title: Text('Connection Guide'),
-                              content: Text('Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Larngoscope startup'),
+                              content: Text('Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Lary ngoscope startup'),
                               actions: [
                                 TextButton(
                                   onPressed: controller.dismiss,
