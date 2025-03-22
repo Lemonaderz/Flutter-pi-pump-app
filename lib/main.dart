@@ -234,10 +234,6 @@ Future<void> requestPermission() async {
       }
       else{
         current = data;
-        if (_connected){
-          current = "Connecting";
-          Connect();
-        }
           
       }
   
@@ -254,8 +250,15 @@ Future<void> requestPermission() async {
   
   void changeStrength(String deviceId, int strength) async {
     if (_connected){
-      final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: strengthUuid, deviceId: deviceId);
-      print(flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [strength]));
+      try{
+        final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: strengthUuid, deviceId: deviceId);
+        flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [strength]);
+      }
+      catch(e)
+      {
+        print(e);
+      }
+      
     }
   }
   void changeSpeed(String  deviceId, int speed) async {
@@ -796,7 +799,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     onPressed: () {
                       if (appState._connected)
                       {
-                        appState.changeSpeed(_ubiqueDevice.id, 0);
+                        appState.changeSpeed(_ubiqueDevice.id, 1);
                       }
                       else
                       {
@@ -1009,6 +1012,9 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
               width: 240, // <-- TextField width
 
             child: TextField(
+              onTapOutside: (event){
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
                 controller: textController,
                  decoration: InputDecoration(labelText: "Enter Respiratory Rate"),
                  keyboardType: TextInputType.number,
@@ -1393,7 +1399,7 @@ class _MyLaryngPageState extends State<MyLaryngPage> with TickerProviderStateMix
         children: [
            Image.asset('assets/images/croppedlogo.png',fit: BoxFit.fitHeight,),
            SizedBox(height: 10),
-            BigCard(pair: pair),
+            // BigCard(pair: pair),
             Expanded( child:  Center()),
             Expanded( child:  Center( child:
              Container(
