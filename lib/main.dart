@@ -35,12 +35,15 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
+        child:
+        Expanded( child:
+        ListView(
+          children:[
+         Column(
 
           children: [
-            SizedBox(height: 05),
             Image.asset('assets/images/croppedlogo.png',fit: BoxFit.cover),
-            SizedBox(height: 65),
+            SizedBox(height: 35),
             SizedBox(height: 150, width: 150, child:ElevatedButton(
           child: const Text('Pulse App'),
           onPressed: () {
@@ -102,12 +105,13 @@ class LandingPage extends StatelessWidget {
           )
 
           
-        ))
+        )),            SizedBox(height: 10),
+
         ],)
         
         
         
-      ),
+      ])),)
     );
   }
 }
@@ -249,13 +253,25 @@ Future<void> requestPermission() async {
   }
   
   void changeStrength(String deviceId, int strength) async {
+    
     if (_connected){
+      flutterReactiveBle.discoverAllServices(deviceId);
+      List<Service> services = await flutterReactiveBle.getDiscoveredServices(deviceId);
+      // for (Service service in services)
+      // {
+      //   print(service.characteristics);
+      // }
+
+
       try{
+        flutterReactiveBle.discoverAllServices(deviceId);
         final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: strengthUuid, deviceId: deviceId);
+        print(strength);
         flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [strength]);
       }
       catch(e)
       {
+        current = e.toString();
         print(e);
       }
       
@@ -266,11 +282,13 @@ Future<void> requestPermission() async {
       try{
       final writeCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: deviceId); 
       print(writeCharacteristic);
-      flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [speed]);
+      print(speed);
+      final response = await flutterReactiveBle.writeCharacteristicWithResponse(writeCharacteristic, value: [speed]);
 
       }
       catch(e)
       {
+        current = e.toString();
         print("error");
       }
       
@@ -339,7 +357,7 @@ Future<void> requestPermission() async {
 
         flutterReactiveBle.connectToDevice(
         id: device.id,
-        servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
+        servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid, strengthUuid]},
         connectionTimeout: const Duration(seconds: 1),
         ).listen((connectionState) async {
           if (connectionState.connectionState == DeviceConnectionState.disconnected){
@@ -357,7 +375,7 @@ Future<void> requestPermission() async {
               
               flutterReactiveBle.connectToDevice(
               id: device.id,
-              servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid]},
+              servicesWithCharacteristicsToDiscover: {serviceUuid: [characteristicUuid, strengthUuid]},
               connectionTimeout: const Duration(seconds: 1),
                   );
 
@@ -372,9 +390,28 @@ Future<void> requestPermission() async {
             _scanStream.cancel();
             stop_scanning = true;
             currentlyScanning = false;
+            // flutterReactiveBle.getDiscoveredServices(device.id);
+            
+            // List<Characteristic> characteristicIds = new List<Characteristic>.empty(growable: true);
+            // List<Service> services = await flutterReactiveBle.getDiscoveredServices(device.id);
+            // for (Service d in services)
+            // {
+            //   for (Characteristic c in d.characteristics)
+            //   {
+            //     characteristicIds.add(c);
+            //   }
+            // }
+            // for(Characteristic c in characteristicIds)
+            // {
+            //   print(c);
+            // }
             getNext('Connecting');
           
             discoverPiServices(device.id);
+            await Future.delayed(const Duration(seconds: 3));
+            flutterReactiveBle.discoverAllServices(device.id);
+            flutterReactiveBle.getDiscoveredServices(device.id);
+
             print("$device");
           }
 
@@ -786,20 +823,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     child: Text('120')),
               ],
             ), 
-            SizedBox(
-              width: 400,
+            Expanded(
+              
               child: 
             ListView(
               shrinkWrap: true, //just set this property
               padding: const EdgeInsets.all(8.0),
-              clipBehavior: Clip.none,
+              clipBehavior: Clip.hardEdge,
               children: <Widget>[
                                   
                     ElevatedButton(
                     onPressed: () {
                       if (appState._connected)
                       {
-                        appState.changeSpeed(_ubiqueDevice.id, 1);
+                        appState.changeSpeed(_ubiqueDevice.id, 0);
                       }
                       else
                       {
@@ -893,22 +930,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       
                     },
                     child: Text('Strong')),
-                    
-                    
-              ],
-            ),),
-            
-            ElevatedButton(
+                    Center(child: Column(
+                      children: [ElevatedButton(
                     onPressed: () {
                       appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
                     },
                     child: Text('Report Issue')),
           ElevatedButton(
+
                     onPressed: () {
                       Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
                       appState.reset();
                     },
-                    child: Text('Back')),],
+                    child: Text('Back')),]
+                    ),)
+                    
+                    
+                    
+              ],
+            ),),
+            
+            ],
         ),
       ),
     );
@@ -1181,13 +1223,12 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
                     child: Text('20')),
               ],
             ), 
-            SizedBox(
-              width: 400,
+            Expanded(
               child: 
             ListView(
               shrinkWrap: true, //just set this property
               padding: const EdgeInsets.all(8.0),
-              clipBehavior: Clip.none,
+              clipBehavior: Clip.hardEdge,
               children: <Widget>[
                                   
                     ElevatedButton(
@@ -1288,22 +1329,26 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
                       
                     },
                     child: Text('Normal')),
+                    Center(child: Column(
+                      children: [ElevatedButton(
+                    onPressed: () {
+                      appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
+                    },
+                    child: Text('Report Issue')),
+          ElevatedButton(
+
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
+                      appState.reset();
+                    },
+                    child: Text('Back')),]
+                    ),)
                     
                     
               ],
             ),),
             
-            ElevatedButton(
-                    onPressed: () {
-                      appState._launchURL('https://forms.gle/spvtjherXz3DNYiJ9'); 
-                    },
-                    child: Text('Report Issue')),
-           ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context) => const LandingPage()));
-                      appState.reset();
-                    },
-                    child: Text('Back')),
+           
           ],
         ),
       ),
