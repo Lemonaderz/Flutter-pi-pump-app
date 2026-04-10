@@ -1,22 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/services.dart';
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flash/flash.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_mjpeg/flutter_mjpeg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 late DiscoveredDevice _ubiqueDevice;
 String scanning = 'Scanning...';
-int _fps = 5;
 void main() {
   runApp(MaterialApp(
     home: LandingPage(),
@@ -165,8 +159,6 @@ class LaryngApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   // Some state management stuff
-  bool _foundDeviceWaitingToConnect = false;
-  bool _scanStarted = false;
   bool _connected = false;
   bool celsius = false;
   bool stop_scanning = false;
@@ -176,10 +168,7 @@ class MyAppState extends ChangeNotifier {
 // Bluetooth related variables
   final flutterReactiveBle = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> _scanStream;
-  late QualifiedCharacteristic _rxCharacteristic;
-  late StreamSubscription<ConnectionStateUpdate> _connect;
 // These are the UUIDs of your device
-  late Stream<ConnectionStateUpdate> _connectionStream;
   final Uuid serviceUuid = Uuid.parse("00000001-710e-4a5b-8d75-3e5b444bc3cf");
 
   final Uuid characteristicUuid =
@@ -273,11 +262,6 @@ class MyAppState extends ChangeNotifier {
         print("error");
       }
     }
-    if (speed > 0) {
-      _fps = 60;
-    } else {
-      _fps = 10;
-    }
 
     notifyListeners();
   }
@@ -309,7 +293,6 @@ class MyAppState extends ChangeNotifier {
   }
 
   void discoverDevices() {
-    bool permGranted = true;
     startScan();
     currentlyScanning = true;
     List<String> mList = ['Thermometer'];
@@ -321,7 +304,6 @@ class MyAppState extends ChangeNotifier {
         if (mList.contains(device.name)) {
           await Future.delayed(const Duration(seconds: 1));
           _ubiqueDevice = device;
-          _foundDeviceWaitingToConnect = true;
 
           flutterReactiveBle
               .connectToDevice(
@@ -481,8 +463,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   String title = "Currently Scanning";
                   String content = "Already scanning.";
                   if (appState._connected) {
-                    String title = "Already Connected";
-                    String content =
+                    title = "Already Connected";
+                    content =
                         "Device Already connected. If errors persist please restart the application.";
                   }
                   context.showFlash(
@@ -968,8 +950,8 @@ class _MyVentPageState extends State<MyVentPage> with TickerProviderStateMixin {
                   String title = "Currently Scanning";
                   String content = "Already scanning.";
                   if (appState._connected) {
-                    String title = "Already Connected";
-                    String content =
+                    title = "Already Connected";
+                    content =
                         "Device Already connected. If errors persist please restart the application.";
                   }
                   context.showFlash(
@@ -1420,7 +1402,6 @@ class _MyLaryngPageState extends State<MyLaryngPage>
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
     appState.stop_check = false;
     appState.run_check(_controller);
     return Scaffold(
