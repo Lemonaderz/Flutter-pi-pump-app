@@ -29,11 +29,14 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
     final pair = appState.current;
     appState.requestPermission();
 
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+          padding: const EdgeInsets.only(bottom: 20.0, left: 16.0, right: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

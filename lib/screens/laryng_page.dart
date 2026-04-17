@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
@@ -60,16 +61,19 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: LayoutBuilder(
           builder: (context, constraints) {
             const padding = 20.0;
             final maxWidth = constraints.maxWidth - padding * 2;
             final maxHeight = constraints.maxHeight - 150; // estimate for image and buttons
             final squareSize = maxWidth < maxHeight ? maxWidth : maxHeight;
             return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset(
                   'assets/images/croppedlogo.png',

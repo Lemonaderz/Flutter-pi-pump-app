@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'pulse_page.dart';
 import 'vent_page.dart';
 import 'laryng_page.dart';
@@ -9,10 +10,13 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: ListView(
+          padding: const EdgeInsets.only(bottom: 48.0, left: 24.0, right: 24.0),
           children: [
             Column(
               children: [
