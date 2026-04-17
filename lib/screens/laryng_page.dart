@@ -62,43 +62,54 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
     final appState = context.watch<MyAppState>();
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/croppedlogo.png',
-              fit: BoxFit.fitHeight,
-            ),
-            const SizedBox(height: 10),
-            const Expanded(child: Center()),
-            Expanded(
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 2),
-                  ),
-                  child: WebViewWidget(controller: _controller),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const padding = 20.0;
+            final maxWidth = constraints.maxWidth - padding * 2;
+            final maxHeight = constraints.maxHeight - 150; // estimate for image and buttons
+            final squareSize = maxWidth < maxHeight ? maxWidth : maxHeight;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/croppedlogo.png',
+                  fit: BoxFit.fitHeight,
                 ),
-              ),
-            ),
-            const Expanded(child: Center()),
-            ElevatedButton(
-              onPressed: () {
-                context.showCustomAlert(
-                  'Connection Guide',
-                  'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Laryngoscope startup',
-                );
-              },
-              child: const Text('How to connect'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                appState.stopCheck = true;
-                Navigator.pop(context);
-              },
-              child: const Text('Back'),
-            ),
-          ],
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Center(
+                      child: Container(
+                        width: squareSize,
+                        height: squareSize,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 2),
+                        ),
+                        child: WebViewWidget(controller: _controller),
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    context.showCustomAlert(
+                      'Connection Guide',
+                      'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Laryngoscope startup',
+                    );
+                  },
+                  child: const Text('How to connect'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    appState.stopCheck = true;
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Back'),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
