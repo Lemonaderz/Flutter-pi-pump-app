@@ -5,6 +5,7 @@ import '../providers/app_state.dart';
 import '../widgets/big_card.dart';
 import '../widgets/alert_dialog.dart';
 import '../widgets/rate_button.dart';
+import '../widgets/top_banner.dart';
 
 class VentPage extends StatefulWidget {
   const VentPage({super.key});
@@ -43,14 +44,7 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 100.0,
-                      color: const Color(0xFFA20202),
-                      child: Center(
-                        child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.contain),
-                      ),
-                    ),
+                    const TopBanner(),
                     const SizedBox(height: 20),
                     BigCard(pair: pair),
                     const SizedBox(height: 12),

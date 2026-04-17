@@ -4,6 +4,7 @@ import 'pulse_page.dart';
 import 'vent_page.dart';
 import 'laryng_page.dart';
 import '../widgets/app_menu_button.dart';
+import '../widgets/top_banner.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -17,14 +18,7 @@ class LandingPage extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: 100.0,
-              color: const Color(0xFFA20202),
-              child: Center(
-                child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.contain),
-              ),
-            ),
+            const TopBanner(),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.only(bottom: 48.0, left: 24.0, right: 24.0),

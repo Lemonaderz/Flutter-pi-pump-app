@@ -4,6 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import '../widgets/alert_dialog.dart';
+import '../widgets/top_banner.dart';
 
 class MyLaryngPage extends StatefulWidget {
   const MyLaryngPage({super.key});
@@ -75,14 +76,7 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  width: double.infinity,
-                  height: 100.0,
-                  color: const Color(0xFFA20202),
-                  child: Center(
-                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.contain),
-                  ),
-                ),
+                const TopBanner(),
                 const SizedBox(height: 10),
                 Expanded(
                   child: Padding(
