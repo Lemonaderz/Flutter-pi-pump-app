@@ -5,6 +5,7 @@ import '../providers/app_state.dart';
 import '../widgets/big_card.dart';
 import '../widgets/alert_dialog.dart';
 import '../widgets/rate_button.dart';
+import '../widgets/control_button_column.dart';
 import '../widgets/top_banner.dart';
 
 class PulsePage extends StatefulWidget {
@@ -112,70 +113,54 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Center(
-                            child: SizedBox(
-                              width: buttonWidth,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (appState.connected) {
-                                        appState.changeSpeed(ubiqueDevice.id, 0);
-                                      } else {
-                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                      }
-                                    },
-                                    child: const Text('Stop'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (appState.connected) {
-                                        appState.changeStrength(ubiqueDevice.id, 1);
-                                      } else {
-                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                      }
-                                    },
-                                    child: const Text('Weak'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (appState.connected) {
-                                        appState.changeStrength(ubiqueDevice.id, 0);
-                                      } else {
-                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                      }
-                                    },
-                                    child: const Text('Strong'),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                                    },
-                                    child: const Text('Report Issue'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      appState.reset();
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Back'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                    ControlButtonColumn(
+                      primaryButtons: [
+                        ControlButtonItem(
+                          label: 'Stop',
+                          onPressed: () {
+                            if (appState.connected) {
+                              appState.changeSpeed(ubiqueDevice.id, 0);
+                            } else {
+                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                            }
+                          },
+                        ),
+                        ControlButtonItem(
+                          label: 'Weak',
+                          onPressed: () {
+                            if (appState.connected) {
+                              appState.changeStrength(ubiqueDevice.id, 1);
+                            } else {
+                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                            }
+                          },
+                        ),
+                        ControlButtonItem(
+                          label: 'Strong',
+                          onPressed: () {
+                            if (appState.connected) {
+                              appState.changeStrength(ubiqueDevice.id, 0);
+                            } else {
+                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                            }
+                          },
+                        ),
+                      ],
+                      secondaryButtons: [
+                        ControlButtonItem(
+                          label: 'Report Issue',
+                          onPressed: () {
+                            appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
+                          },
+                        ),
+                        ControlButtonItem(
+                          label: 'Back',
+                          onPressed: () {
+                            appState.reset();
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
                     ),
                       ],
                     ),
