@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class TopBanner extends StatelessWidget {
   const TopBanner({super.key});
 
-  static const double _logoXAlignment = 0.05;
-  static const double _bannerHeight = 140.0;
-  static const double _logoHeight = 79.0;
+  static const double _logoXAlignment = 0.4;
+  static const double _bannerHeight = 160.0;
+  static const double _logoHeight = 90.0;
 
   @override
   Widget build(BuildContext context) {

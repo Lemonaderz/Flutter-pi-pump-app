@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 
 class AppMenuButton extends StatelessWidget {
   final String label;
+  final String imagePath;
   final VoidCallback onPressed;
 
-  const AppMenuButton({super.key, required this.label, required this.onPressed});
+  const AppMenuButton({
+    super.key, 
+    required this.label, 
+    required this.imagePath,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,21 @@ class AppMenuButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: Text(label),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              imagePath,
+              height: 60,
+              width: 60,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

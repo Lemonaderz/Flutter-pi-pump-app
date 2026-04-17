@@ -28,6 +28,7 @@ class LandingPage extends StatelessWidget {
                       const SizedBox(height: 35),
                       AppMenuButton(
                         label: 'Pulse App',
+                        imagePath: 'assets/images/heart-circle.png',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -38,6 +39,7 @@ class LandingPage extends StatelessWidget {
                       const SizedBox(height: 25),
                       AppMenuButton(
                         label: 'Vent App',
+                        imagePath: 'assets/images/lungs-circle.png',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -48,6 +50,7 @@ class LandingPage extends StatelessWidget {
                       const SizedBox(height: 25),
                       AppMenuButton(
                         label: 'Video Laryngoscope',
+                        imagePath: 'assets/images/laryng-circle.png',
                         onPressed: () {
                           Navigator.push(
                             context,
