@@ -145,21 +145,51 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                           },
                         ),
                       ],
-                      secondaryButtons: [
-                        ControlButtonItem(
-                          label: 'Report Issue',
-                          onPressed: () {
-                            appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Back',
-                          onPressed: () {
-                            appState.reset();
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
+                          return Center(
+                            child: SizedBox(
+                              width: buttonWidth,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 4.0,
+                                      ),
+                                    ),
+                                    child: const Text('Report Issue'),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.reset();
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 4.0,
+                                      ),
+                                    ),
+                                    child: const Text('Back'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
               ),

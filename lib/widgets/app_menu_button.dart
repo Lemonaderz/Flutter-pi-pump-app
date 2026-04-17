@@ -19,7 +19,6 @@ class AppMenuButton extends StatelessWidget {
       width: 150,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red.shade50,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
