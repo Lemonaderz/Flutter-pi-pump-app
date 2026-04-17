@@ -102,14 +102,14 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                     const SizedBox(height: 12),
                     Wrap(
                       alignment: WrapAlignment.center,
-                      spacing: 8,
+                      spacing: 6,
                       runSpacing: 8,
                       children: [
-                        RateButton(rate: 40, appState: appState),
-                        RateButton(rate: 60, appState: appState),
-                        RateButton(rate: 80, appState: appState),
-                        RateButton(rate: 100, appState: appState),
-                        RateButton(rate: 120, appState: appState),
+                        RateButton(rate: 40, appState: appState, compact: true),
+                        RateButton(rate: 60, appState: appState, compact: true),
+                        RateButton(rate: 80, appState: appState, compact: true),
+                        RateButton(rate: 100, appState: appState, compact: true),
+                        RateButton(rate: 120, appState: appState, compact: true),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -146,21 +146,51 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                           },
                         ),
                       ],
-                      secondaryButtons: [
-                        ControlButtonItem(
-                          label: 'Report Issue',
-                          onPressed: () {
-                            appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Back',
-                          onPressed: () {
-                            appState.reset();
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
+                          return Center(
+                            child: SizedBox(
+                              width: buttonWidth,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 4.0,
+                                      ),
+                                    ),
+                                    child: const Text('Report Issue'),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.reset();
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0,
+                                        vertical: 4.0,
+                                      ),
+                                    ),
+                                    child: const Text('Back'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                       ],
                     ),

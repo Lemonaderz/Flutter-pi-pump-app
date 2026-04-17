@@ -20,7 +20,16 @@ class MyApp extends StatelessWidget {
         home: const LandingPage(),
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFA20202)),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFA20202),
+              foregroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
+          ),
         ),
       ),
     );

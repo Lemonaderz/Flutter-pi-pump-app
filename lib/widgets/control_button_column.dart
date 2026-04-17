@@ -14,19 +14,24 @@ class ControlButtonColumn extends StatelessWidget {
   const ControlButtonColumn({
     super.key,
     required this.primaryButtons,
-    required this.secondaryButtons,
+    this.stretchButtons = true,
+    this.horizontalPadding = _defaultHorizontalPadding,
+    this.bottomPadding = 0,
   });
 
   final List<ControlButtonItem> primaryButtons;
-  final List<ControlButtonItem> secondaryButtons;
+  final bool stretchButtons;
+  final double horizontalPadding;
+  final double bottomPadding;
 
-  static const double _horizontalPadding = 38.0;
+  static const double _defaultHorizontalPadding = 48.0;
   static const double _regularSpacing = 8.0;
-  static const double _groupSpacing = 16.0;
   static const double _desktopWidthFactor = 0.5;
-  static const double _buttonMinHeight = 52.0;
+  static const double _primaryButtonMinHeight = 52.0;
   static const double _buttonBorderRadius = 14.0;
-  static const EdgeInsets _buttonPadding = EdgeInsets.symmetric(
+  static const Color _buttonBackgroundColor = Colors.white;
+  static const Color _buttonTextColor = Color(0xFFA20202);
+  static const EdgeInsets _primaryButtonPadding = EdgeInsets.symmetric(
     horizontal: 16.0,
     vertical: 12.0,
   );
@@ -38,36 +43,56 @@ class ControlButtonColumn extends StatelessWidget {
         final buttonWidth = constraints.maxWidth > 600
             ? constraints.maxWidth * _desktopWidthFactor
             : constraints.maxWidth;
+        final buttons = _buildButtons(
+          primaryButtons,
+          minHeight: _primaryButtonMinHeight,
+          padding: _primaryButtonPadding,
+        );
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+          padding: EdgeInsets.fromLTRB(
+            horizontalPadding,
+            0,
+            horizontalPadding,
+            bottomPadding,
+          ),
           child: Center(
-            child: SizedBox(
-              width: buttonWidth,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ..._buildButtons(primaryButtons),
-                  if (primaryButtons.isNotEmpty && secondaryButtons.isNotEmpty)
-                    const SizedBox(height: _groupSpacing),
-                  ..._buildButtons(secondaryButtons),
-                ],
-              ),
-            ),
+            child: stretchButtons
+                ? SizedBox(
+                    width: buttonWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: buttons,
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: buttons,
+                  ),
           ),
         );
       },
     );
   }
 
-  List<Widget> _buildButtons(List<ControlButtonItem> buttons) {
+  List<Widget> _buildButtons(
+    List<ControlButtonItem> buttons, {
+    required double minHeight,
+    required EdgeInsets padding,
+  }) {
     return [
       for (var index = 0; index < buttons.length; index++) ...[
         ElevatedButton(
           onPressed: buttons[index].onPressed,
           style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(_buttonMinHeight),
-            padding: _buttonPadding,
+            backgroundColor: _buttonBackgroundColor,
+            foregroundColor: _buttonTextColor,
+            minimumSize: Size.fromHeight(minHeight),
+            padding: padding,
+            elevation: 4,
+            shadowColor: Colors.black26,
+            surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(_buttonBorderRadius),
             ),
