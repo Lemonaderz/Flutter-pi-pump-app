@@ -14,7 +14,7 @@ class TopBanner extends StatelessWidget {
       height: _bannerHeight,
       color: const Color(0xFFA20202),
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+        padding: const EdgeInsets.only(top: 40.0),
         child: Align(
           alignment: const Alignment(_logoXAlignment, 0.0),
           child: Image.asset(
