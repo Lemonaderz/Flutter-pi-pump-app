@@ -115,60 +115,63 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
-                        return Center(
-                          child: SizedBox(
-                            width: buttonWidth,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (appState.connected) {
-                                      appState.changeSpeed(ubiqueDevice.id, 0);
-                                    } else {
-                                      context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                    }
-                                  },
-                                  child: const Text('Stop'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (appState.connected) {
-                                      appState.changeStrength(ubiqueDevice.id, 1);
-                                    } else {
-                                      context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                    }
-                                  },
-                                  child: const Text('Weak'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (appState.connected) {
-                                      appState.changeStrength(ubiqueDevice.id, 0);
-                                    } else {
-                                      context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
-                                    }
-                                  },
-                                  child: const Text('Strong'),
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                                  },
-                                  child: const Text('Report Issue'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    appState.reset();
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Back'),
-                                ),
-                              ],
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Center(
+                            child: SizedBox(
+                              width: buttonWidth,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (appState.connected) {
+                                        appState.changeSpeed(ubiqueDevice.id, 0);
+                                      } else {
+                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                                      }
+                                    },
+                                    child: const Text('Stop'),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (appState.connected) {
+                                        appState.changeStrength(ubiqueDevice.id, 1);
+                                      } else {
+                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                                      }
+                                    },
+                                    child: const Text('Weak'),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (appState.connected) {
+                                        appState.changeStrength(ubiqueDevice.id, 0);
+                                      } else {
+                                        context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                                      }
+                                    },
+                                    child: const Text('Strong'),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
+                                    },
+                                    child: const Text('Report Issue'),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      appState.reset();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Back'),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
