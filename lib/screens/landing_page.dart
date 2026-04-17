@@ -20,7 +20,13 @@ class LandingPage extends StatelessWidget {
           children: [
             Column(
               children: [
-                Image.asset('assets/images/croppedlogo.png', fit: BoxFit.cover),
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFFA20202),
+                  child: Center(
+                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.cover),
+                  ),
+                ),
                 const SizedBox(height: 35),
                 AppMenuButton(
                   label: 'Pulse App',

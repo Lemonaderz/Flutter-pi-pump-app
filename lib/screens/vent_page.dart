@@ -40,7 +40,13 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/croppedlogo.png', fit: BoxFit.cover),
+              Container(
+                width: double.infinity,
+                color: const Color(0xFFA20202),
+                child: Center(
+                  child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.cover),
+                ),
+              ),
               const SizedBox(height: 20),
               BigCard(pair: pair),
               const SizedBox(height: 12),

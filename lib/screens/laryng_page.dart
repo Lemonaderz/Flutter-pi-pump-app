@@ -75,9 +75,12 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Image.asset(
-                  'assets/images/croppedlogo.png',
-                  fit: BoxFit.fitHeight,
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFFA20202),
+                  child: Center(
+                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.fitHeight),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Expanded(
