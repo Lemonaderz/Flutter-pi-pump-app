@@ -77,9 +77,10 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
               children: [
                 Container(
                   width: double.infinity,
+                  height: 100.0,
                   color: const Color(0xFFA20202),
                   child: Center(
-                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.fitHeight),
+                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.contain),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -98,21 +99,37 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    context.showCustomAlert(
-                      'Connection Guide',
-                      'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Laryngoscope startup',
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
+                    return Center(
+                      child: SizedBox(
+                        width: buttonWidth,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                context.showCustomAlert(
+                                  'Connection Guide',
+                                  'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Laryngoscope startup',
+                                );
+                              },
+                              child: const Text('How to connect'),
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                appState.stopCheck = true;
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Back'),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
-                  child: const Text('How to connect'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    appState.stopCheck = true;
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Back'),
                 ),
               ],
             );

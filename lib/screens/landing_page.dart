@@ -15,49 +15,56 @@ class LandingPage extends StatelessWidget {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        body: ListView(
-          padding: const EdgeInsets.only(bottom: 48.0, left: 24.0, right: 24.0),
+        body: Column(
           children: [
-            Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  color: const Color(0xFFA20202),
-                  child: Center(
-                    child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.cover),
+            Container(
+              width: double.infinity,
+              height: 100.0,
+              color: const Color(0xFFA20202),
+              child: Center(
+                child: Image.asset('assets/images/croppedlogo.png', fit: BoxFit.contain),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 48.0, left: 24.0, right: 24.0),
+                children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 35),
+                      AppMenuButton(
+                        label: 'Pulse App',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PulsePage()),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      AppMenuButton(
+                        label: 'Vent App',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const VentPage()),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      AppMenuButton(
+                        label: 'Video Laryngoscope',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MyLaryngPage()),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 35),
-                AppMenuButton(
-                  label: 'Pulse App',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PulsePage()),
-                    );
-                  },
-                ),
-                const SizedBox(height: 25),
-                AppMenuButton(
-                  label: 'Vent App',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const VentPage()),
-                    );
-                  },
-                ),
-                const SizedBox(height: 25),
-                AppMenuButton(
-                  label: 'Video Laryngoscope',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MyLaryngPage()),
-                    );
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
