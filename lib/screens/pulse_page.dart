@@ -51,199 +51,207 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    const TopBanner(),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Stack(
-                        alignment: Alignment.topCenter,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () async {
-                                await appState.reset();
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: Container(
-                                width: 80,
-                                height: 60,
-                                alignment: Alignment.topLeft,
-                                child: Icon(
-                                  Icons.arrow_back_ios_new,
-                                  size: 20,
-                                  color: Color(0xFFA20202),
+                      const TopBanner(),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  await appState.reset();
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 60,
+                                  alignment: Alignment.topLeft,
+                                  child: Icon(
+                                    Icons.arrow_back_ios_new,
+                                    size: 20,
+                                    color: Color(0xFFA20202),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          BigCard(pair: pair),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (appState.currentlyScanning || appState.connected) {
-                          var title = 'Currently Scanning';
-                          var content = 'Already scanning.';
-                          if (appState.connected) {
-                            title = 'Already Connected';
-                            content =
-                                'Device Already connected. If errors persist please restart the application.';
-                          }
-                          context.showCustomAlert(title, content);
-                        } else {
-                          appState.getNext('Beginning');
-                          appState.discoverDevices();
-                        }
-                      },
-                      child: const Text('Scan'),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: 240,
-                      height: 100,
-                      child: Image.asset('assets/images/heartrate.gif'),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: 240,
-                      child: TextField(
-                        onTapOutside: (event) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        controller: textController,
-                        decoration: const InputDecoration(
-                            labelText: 'Enter Heart Rate'),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        try {
-                          displayText = int.parse(textController.text);
-                          appState.changeSpeed(ubiqueDevice.id, displayText);
-                        } on FormatException {
-                          context.showCustomAlert('Input Issue',
-                              'Please only input numbers from 40-120.');
-                        } catch (e) {
-                          context.showCustomAlert('Not Connected',
-                              'Please connect before modifying heart rate.');
-                        }
-                      },
-                      child: const Text('Enter Heart Rate'),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 6,
-                      runSpacing: 8,
-                      children: [
-                        RateButton(rate: 40, appState: appState, compact: true),
-                        RateButton(rate: 60, appState: appState, compact: true),
-                        RateButton(rate: 80, appState: appState, compact: true),
-                        RateButton(
-                            rate: 100, appState: appState, compact: true),
-                        RateButton(
-                            rate: 120, appState: appState, compact: true),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ControlButtonColumn(
-                      stretchButtons: false,
-                      primaryButtons: [
-                        ControlButtonItem(
-                          label: 'Stop',
-                          icon: Icons.stop_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeSpeed(ubiqueDevice.id, 0);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying heart rate.');
-                            }
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Weak',
-                          icon: Icons.remove_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeStrength(ubiqueDevice.id, 1);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying heart rate.');
-                            }
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Strong',
-                          icon: Icons.add_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeStrength(ubiqueDevice.id, 0);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying heart rate.');
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
-                          return Center(
-                            child: SizedBox(
-                              width: buttonWidth,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 4.0,
-                                      ),
+                            BigCard(pair: pair),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  showDialog(context: context, builder: (BuildContext context) {
+                                    return  AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                      side: const BorderSide(),
                                     ),
-                                    child: const Text('Report Issue'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      await appState.reset();
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 4.0,
-                                      ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 24.0,
+                                      top: 16.0,
+                                      right: 24.0,
+                                      bottom: 16.0,
                                     ),
-                                    child: const Text('Back'),
+                                    title: Text("Report Issue"),
+                                    content:
+                                        Text("Go to form to report issue?"),
+                                    actionsAlignment: MainAxisAlignment.center,
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => appState.launchURL(
+                                            'https://forms.gle/spvtjherXz3DNYiJ9'),
+                                        child: const Text('Yes'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('No'),
+                                      ),
+                                    ],
+                                  );
+                                  });
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 60,
+                                  alignment: Alignment.topRight,
+                                  child: Icon(
+                                    Icons.warning_amber_outlined,
+                                    size: 25,
+                                    color: Color(0xFFA20202),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
                       ),
-                    ),
-                    ],
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (appState.currentlyScanning ||
+                              appState.connected) {
+                            var title = 'Currently Scanning';
+                            var content = 'Already scanning.';
+                            if (appState.connected) {
+                              title = 'Already Connected';
+                              content =
+                                  'Device Already connected. If errors persist please restart the application.';
+                            }
+                            context.showCustomAlert(title, content);
+                          } else {
+                            appState.getNext('Beginning');
+                            appState.discoverDevices();
+                          }
+                        },
+                        child: const Text('Scan'),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: 240,
+                        height: 100,
+                        child: Image.asset('assets/images/heartrate.gif'),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: 240,
+                        child: TextField(
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          controller: textController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter Heart Rate'),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          try {
+                            displayText = int.parse(textController.text);
+                            appState.changeSpeed(ubiqueDevice.id, displayText);
+                          } on FormatException {
+                            context.showCustomAlert('Input Issue',
+                                'Please only input numbers from 40-120.');
+                          } catch (e) {
+                            context.showCustomAlert('Not Connected',
+                                'Please connect before modifying heart rate.');
+                          }
+                        },
+                        child: const Text('Enter Heart Rate'),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 6,
+                        runSpacing: 8,
+                        children: [
+                          RateButton(
+                              rate: 40, appState: appState, compact: true),
+                          RateButton(
+                              rate: 60, appState: appState, compact: true),
+                          RateButton(
+                              rate: 80, appState: appState, compact: true),
+                          RateButton(
+                              rate: 100, appState: appState, compact: true),
+                          RateButton(
+                              rate: 120, appState: appState, compact: true),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ControlButtonColumn(
+                        stretchButtons: false,
+                        primaryButtons: [
+                          ControlButtonItem(
+                            label: 'Stop',
+                            icon: Icons.stop_outlined,
+                            onPressed: () {
+                              if (appState.connected) {
+                                appState.changeSpeed(ubiqueDevice.id, 0);
+                              } else {
+                                context.showCustomAlert('Not Connected',
+                                    'Please connect before modifying heart rate.');
+                              }
+                            },
+                          ),
+                          ControlButtonItem(
+                            label: 'Weak',
+                            icon: Icons.remove_outlined,
+                            onPressed: () {
+                              if (appState.connected) {
+                                appState.changeStrength(ubiqueDevice.id, 1);
+                              } else {
+                                context.showCustomAlert('Not Connected',
+                                    'Please connect before modifying heart rate.');
+                              }
+                            },
+                          ),
+                          ControlButtonItem(
+                            label: 'Strong',
+                            icon: Icons.add_outlined,
+                            onPressed: () {
+                              if (appState.connected) {
+                                appState.changeStrength(ubiqueDevice.id, 0);
+                              } else {
+                                context.showCustomAlert('Not Connected',
+                                    'Please connect before modifying heart rate.');
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ]
                   ),
                 ),
               ),
