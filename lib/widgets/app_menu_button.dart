@@ -29,8 +29,8 @@ class AppMenuButton extends StatelessWidget {
               children: [
                 Image.asset(
                   imagePath,
-                  height: 92,
-                  width: 92,
+                  height: 70,
+                  width: 70,
                 ),
                 const SizedBox(height: 14),
                 Text(
@@ -39,7 +39,7 @@ class AppMenuButton extends StatelessWidget {
                   style: const TextStyle(
                     color: Color(0xFFA20202),
                     fontWeight: FontWeight.w600,
-                    fontSize: 22,
+                    fontSize: 20,
                   ),
                 ),
               ],

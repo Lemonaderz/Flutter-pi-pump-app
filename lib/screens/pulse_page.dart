@@ -82,6 +82,55 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                               ),
                             ),
                             BigCard(pair: pair),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  showDialog(context: context, builder: (BuildContext context) {
+                                    return  AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                      side: const BorderSide(),
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 24.0,
+                                      top: 16.0,
+                                      right: 24.0,
+                                      bottom: 16.0,
+                                    ),
+                                    title: Text("Report Issue"),
+                                    content:
+                                        Text("Go to form to report issue?"),
+                                    actionsAlignment: MainAxisAlignment.center,
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => appState.launchURL(
+                                            'https://forms.gle/spvtjherXz3DNYiJ9'),
+                                        child: const Text('Yes'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('No'),
+                                      ),
+                                    ],
+                                  );
+                                  });
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 60,
+                                  alignment: Alignment.topRight,
+                                  child: Icon(
+                                    Icons.warning_amber_outlined,
+                                    size: 25,
+                                    color: Color(0xFFA20202),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -273,53 +322,7 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final buttonWidth = constraints.maxWidth > 600
-                                ? constraints.maxWidth * 0.5
-                                : constraints.maxWidth;
-                            return Center(
-                              child: SizedBox(
-                                width: buttonWidth,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        appState.launchURL(
-                                            'https://forms.gle/spvtjherXz3DNYiJ9');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10.0,
-                                          vertical: 4.0,
-                                        ),
-                                      ),
-                                      child: const Text('Report Issue'),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        await appState.reset();
-                                        Navigator.pop(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10.0,
-                                          vertical: 4.0,
-                                        ),
-                                      ),
-                                      child: const Text('Back'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ),
