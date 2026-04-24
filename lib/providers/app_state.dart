@@ -20,10 +20,12 @@ class MyAppState extends ChangeNotifier {
   bool currentlyScanning = false;
   bool requestedPermissions = false;
   bool stopCheck = false;
+  bool _hasUbiqueDevice = false;
 
   // Bluetooth related variables
   final flutterReactiveBle = FlutterReactiveBle();
-  late StreamSubscription<DiscoveredDevice> _scanStream;
+  StreamSubscription<DiscoveredDevice>? _scanStream;
+  StreamSubscription<ConnectionStateUpdate>? _connectionStream;
 // These are the UUIDs of your device
   final Uuid serviceUuid = Uuid.parse("00000001-710e-4a5b-8d75-3e5b444bc3cf");
 
@@ -73,7 +75,7 @@ class MyAppState extends ChangeNotifier {
     await flutterReactiveBle.readCharacteristic(characteristic);
   }
 
-  void changeStrength(String deviceId, int strength) async {
+  Future<void> changeStrength(String deviceId, int strength) async {
     if (_connected) {
       flutterReactiveBle.discoverAllServices(deviceId);
       await flutterReactiveBle.getDiscoveredServices(deviceId);
@@ -98,7 +100,7 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void changeSpeed(String deviceId, int speed) async {
+  Future<void> changeSpeed(String deviceId, int speed) async {
     if (_connected) {
       try {
         final writeCharacteristic = QualifiedCharacteristic(
@@ -129,12 +131,15 @@ class MyAppState extends ChangeNotifier {
   void discoverPiServices(String deviceId) async {
     getNext('Connecting');
     await Future.delayed(const Duration(seconds: 1));
-    _scanStream.cancel();
+    await _scanStream?.cancel();
+    _scanStream = null;
 
     stopScanning = true;
+    currentlyScanning = false;
     await Future.delayed(const Duration(seconds: 7));
     getNext("Connected");
     _connected = true;
+    notifyListeners();
   }
 
   void startScan() async {
@@ -147,8 +152,10 @@ class MyAppState extends ChangeNotifier {
   }
 
   void discoverDevices() {
-    startScan();
+    stopScanning = false;
     currentlyScanning = true;
+    scanning = 'Scanning...';
+    startScan();
     List<String> mList = ['Thermometer'];
     try {
       _scanStream = flutterReactiveBle.scanForDevices(
@@ -158,8 +165,9 @@ class MyAppState extends ChangeNotifier {
         if (mList.contains(device.name)) {
           await Future.delayed(const Duration(seconds: 1));
           ubiqueDevice = device;
+          _hasUbiqueDevice = true;
 
-          flutterReactiveBle
+          _connectionStream = flutterReactiveBle
               .connectToDevice(
             id: device.id,
             servicesWithCharacteristicsToDiscover: {
@@ -170,9 +178,17 @@ class MyAppState extends ChangeNotifier {
               .listen((connectionState) async {
             if (connectionState.connectionState ==
                 DeviceConnectionState.disconnected) {
-              _scanStream.cancel();
+              await _scanStream?.cancel();
+              _scanStream = null;
+              _connected = false;
+              currentlyScanning = false;
               print("disconnected");
-              discoverDevices();
+              if (!stopScanning) {
+                discoverDevices();
+              } else {
+                current = 'Ready';
+                notifyListeners();
+              }
             } else {
               print(connectionState.connectionState);
               if (connectionState.connectionState ==
@@ -188,7 +204,8 @@ class MyAppState extends ChangeNotifier {
                 print("id");
               }
 
-              _scanStream.cancel();
+              await _scanStream?.cancel();
+              _scanStream = null;
               stopScanning = true;
               currentlyScanning = false;
               // flutterReactiveBle.getDiscoveredServices(device.id);
@@ -227,25 +244,40 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void reset() async {
+  Future<void> reset() async {
     print("reset");
+    stopScanning = true;
+    currentlyScanning = false;
+    scanning = 'Scanning...';
+    current = 'Ready';
+    notifyListeners();
+
     try {
-      _scanStream.cancel();
+      await _scanStream?.cancel();
+      _scanStream = null;
     } catch (e) {
       print(e);
     }
 
-    stopScanning = true;
-    if (_connected) {
-      changeSpeed(ubiqueDevice.id, -1);
-    } else {
+    if (_connected && _hasUbiqueDevice) {
       try {
-        await Future.delayed(const Duration(seconds: 7));
-        changeSpeed(ubiqueDevice.id, -1);
+        await changeSpeed(ubiqueDevice.id, -1);
       } catch (exception) {
         print(exception);
       }
     }
+
+    try {
+      await _connectionStream?.cancel();
+      _connectionStream = null;
+    } catch (e) {
+      print(e);
+    }
+
+    _connected = false;
+    _hasUbiqueDevice = false;
+    current = 'Ready';
+    notifyListeners();
   }
 
   void runCheck(WebViewController webview) async {

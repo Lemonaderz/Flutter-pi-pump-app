@@ -6,6 +6,7 @@ import '../widgets/big_card.dart';
 import '../widgets/alert_dialog.dart';
 import '../widgets/rate_button.dart';
 import '../widgets/control_button_column.dart';
+import '../widgets/swipe_back_wrapper.dart';
 import '../widgets/top_banner.dart';
 
 class PulsePage extends StatefulWidget {
@@ -36,15 +37,20 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+        body: SwipeBackWrapper(
+          onBack: () async {
+            await appState.reset();
+            Navigator.pop(context);
+          },
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                     const TopBanner(),
                     const SizedBox(height: 20),
                     BigCard(pair: pair),
@@ -160,7 +166,7 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -173,8 +179,8 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                   ),
                                   const SizedBox(height: 8),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      appState.reset();
+                                    onPressed: () async {
+                                      await appState.reset();
                                       Navigator.pop(context);
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -192,11 +198,12 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                         },
                       ),
                     ),
-                      ],
-                    ),
+                    ],
+                  ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
