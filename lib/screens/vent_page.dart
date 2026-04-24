@@ -56,29 +56,27 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Stack(
-                        alignment: Alignment.center,
+                        alignment: Alignment.topCenter,
                         children: [
                           Align(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: IconButton(
-                                onPressed: () async {
-                                  await appState.reset();
-                                  if (context.mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-                                color: const Color(0xFFA20202),
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(
-                                  minWidth: 28,
-                                  minHeight: 28,
+                            alignment: Alignment.topLeft,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () async {
+                                await appState.reset();
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Container(
+                                width: 80,
+                                height: 60,
+                                alignment: Alignment.topLeft,
+                                child: Icon(
+                                  Icons.arrow_back_ios_new,
+                                  size: 20,
+                                  color: Color(0xFFA20202),
                                 ),
-                                splashRadius: 18,
-                                tooltip: 'Back',
                               ),
                             ),
                           ),
