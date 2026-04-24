@@ -27,9 +27,9 @@ class LandingPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          const Spacer(),
+                          const SizedBox(height: 60),
                           AppMenuButton(
                             label: 'Pulse App',
                             imagePath: 'assets/images/heart-circle.png',

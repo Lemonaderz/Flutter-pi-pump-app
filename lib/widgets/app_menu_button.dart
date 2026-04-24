@@ -15,31 +15,31 @@ class AppMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 170,
+      width: 190,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   imagePath,
-                  height: 72,
-                  width: 72,
+                  height: 92,
+                  width: 92,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Text(
                   label,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFFA20202),
                     fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                    fontSize: 22,
                   ),
                 ),
               ],
