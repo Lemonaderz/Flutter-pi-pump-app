@@ -56,7 +56,8 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                           var content = 'Already scanning.';
                           if (appState.connected) {
                             title = 'Already Connected';
-                            content = 'Device Already connected. If errors persist please restart the application.';
+                            content =
+                                'Device Already connected. If errors persist please restart the application.';
                           }
                           context.showCustomAlert(title, content);
                         } else {
@@ -80,9 +81,12 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
                         controller: textController,
-                        decoration: const InputDecoration(labelText: 'Enter Heart Rate'),
+                        decoration: const InputDecoration(
+                            labelText: 'Enter Heart Rate'),
                         keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -92,9 +96,11 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                           displayText = int.parse(textController.text);
                           appState.changeSpeed(ubiqueDevice.id, displayText);
                         } on FormatException {
-                          context.showCustomAlert('Input Issue', 'Please only input numbers from 40-120.');
+                          context.showCustomAlert('Input Issue',
+                              'Please only input numbers from 40-120.');
                         } catch (e) {
-                          context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                          context.showCustomAlert('Not Connected',
+                              'Please connect before modifying heart rate.');
                         }
                       },
                       child: const Text('Enter Heart Rate'),
@@ -108,94 +114,108 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                         RateButton(rate: 40, appState: appState, compact: true),
                         RateButton(rate: 60, appState: appState, compact: true),
                         RateButton(rate: 80, appState: appState, compact: true),
-                        RateButton(rate: 100, appState: appState, compact: true),
-                        RateButton(rate: 120, appState: appState, compact: true),
+                        RateButton(
+                            rate: 100, appState: appState, compact: true),
+                        RateButton(
+                            rate: 120, appState: appState, compact: true),
                       ],
                     ),
                     const SizedBox(height: 16),
                     ControlButtonColumn(
+                      stretchButtons: false,
                       primaryButtons: [
                         ControlButtonItem(
                           label: 'Stop',
+                          icon: Icons.stop_outlined,
                           onPressed: () {
                             if (appState.connected) {
                               appState.changeSpeed(ubiqueDevice.id, 0);
                             } else {
-                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                              context.showCustomAlert('Not Connected',
+                                  'Please connect before modifying heart rate.');
                             }
                           },
                         ),
                         ControlButtonItem(
                           label: 'Weak',
+                          icon: Icons.remove_outlined,
                           onPressed: () {
                             if (appState.connected) {
                               appState.changeStrength(ubiqueDevice.id, 1);
                             } else {
-                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                              context.showCustomAlert('Not Connected',
+                                  'Please connect before modifying heart rate.');
                             }
                           },
                         ),
                         ControlButtonItem(
                           label: 'Strong',
+                          icon: Icons.add_outlined,
                           onPressed: () {
                             if (appState.connected) {
                               appState.changeStrength(ubiqueDevice.id, 0);
                             } else {
-                              context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
+                              context.showCustomAlert('Not Connected',
+                                  'Please connect before modifying heart rate.');
                             }
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final buttonWidth = constraints.maxWidth > 600 ? constraints.maxWidth * 0.5 : constraints.maxWidth;
-                          return Center(
-                            child: SizedBox(
-                              width: buttonWidth,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      appState.launchURL('https://forms.gle/spvtjherXz3DNYiJ9');
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 4.0,
-                                      ),
-                                    ),
-                                    child: const Text('Report Issue'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      appState.reset();
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 4.0,
-                                      ),
-                                    ),
-                                    child: const Text('Back'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                      ],
-                    ),
+                  ],
                 ),
               ),
+            ),
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(48.0, 16.0, 48.0, 20.0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final buttonWidth = constraints.maxWidth > 600
+                        ? constraints.maxWidth * 0.5
+                        : constraints.maxWidth;
+                    return Center(
+                      child: SizedBox(
+                        width: buttonWidth,
+                        child: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                appState.reset();
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0,
+                                  vertical: 4.0,
+                                ),
+                              ),
+                              child: const Text('Back'),
+                            ),
+                            const Spacer(),
+                            ElevatedButton(
+                              onPressed: () {
+                                appState.launchURL(
+                                    'https://forms.gle/spvtjherXz3DNYiJ9');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0,
+                                  vertical: 4.0,
+                                ),
+                              ),
+                              child: const Text('Report Issue'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

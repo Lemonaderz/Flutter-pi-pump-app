@@ -4,10 +4,12 @@ class ControlButtonItem {
   const ControlButtonItem({
     required this.label,
     required this.onPressed,
+    this.icon,
   });
 
   final String label;
   final VoidCallback onPressed;
+  final IconData? icon;
 }
 
 class ControlButtonColumn extends StatelessWidget {
@@ -25,15 +27,16 @@ class ControlButtonColumn extends StatelessWidget {
   final double bottomPadding;
 
   static const double _defaultHorizontalPadding = 48.0;
-  static const double _regularSpacing = 8.0;
+  static const double _regularSpacing = 14.0;
   static const double _desktopWidthFactor = 0.5;
-  static const double _primaryButtonMinHeight = 52.0;
-  static const double _buttonBorderRadius = 14.0;
-  static const Color _buttonBackgroundColor = Colors.white;
-  static const Color _buttonTextColor = Color(0xFFA20202);
+  static const double _primaryButtonMinHeight = 48.0;
+  static const double _buttonBorderRadius = 9.0;
+  static const double _compactButtonWidth = 148.0;
+  static const Color _buttonBackgroundColor = Color(0xFFF1F3F6);
+  static const Color _buttonTextColor = Color(0xFF28303F);
   static const EdgeInsets _primaryButtonPadding = EdgeInsets.symmetric(
-    horizontal: 16.0,
-    vertical: 12.0,
+    horizontal: 14.0,
+    vertical: 10.0,
   );
 
   @override
@@ -47,6 +50,7 @@ class ControlButtonColumn extends StatelessWidget {
           primaryButtons,
           minHeight: _primaryButtonMinHeight,
           padding: _primaryButtonPadding,
+          stretchButtons: stretchButtons,
         );
 
         return Padding(
@@ -80,6 +84,7 @@ class ControlButtonColumn extends StatelessWidget {
     List<ControlButtonItem> buttons, {
     required double minHeight,
     required EdgeInsets padding,
+    required bool stretchButtons,
   }) {
     return [
       for (var index = 0; index < buttons.length; index++) ...[
@@ -90,14 +95,35 @@ class ControlButtonColumn extends StatelessWidget {
             foregroundColor: _buttonTextColor,
             minimumSize: Size.fromHeight(minHeight),
             padding: padding,
-            elevation: 4,
-            shadowColor: Colors.black26,
+            elevation: 0,
+            shadowColor: Colors.transparent,
             surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(_buttonBorderRadius),
             ),
           ),
-          child: Text(buttons[index].label),
+          child: SizedBox(
+            width: stretchButtons ? double.infinity : _compactButtonWidth,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (buttons[index].icon != null)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Icon(buttons[index].icon, size: 18),
+                  ),
+                Text(
+                  buttons[index].label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         if (index < buttons.length - 1) const SizedBox(height: _regularSpacing),
       ],
