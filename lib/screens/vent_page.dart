@@ -53,7 +53,39 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                     children: [
                     const TopBanner(),
                     const SizedBox(height: 20),
-                    BigCard(pair: pair),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: IconButton(
+                                onPressed: () async {
+                                  await appState.reset();
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                icon: const Icon(Icons.arrow_back_ios_new, size: 16),
+                                color: const Color(0xFFA20202),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(
+                                  minWidth: 28,
+                                  minHeight: 28,
+                                ),
+                                splashRadius: 18,
+                                tooltip: 'Back',
+                              ),
+                            ),
+                          ),
+                          BigCard(pair: pair),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () {
