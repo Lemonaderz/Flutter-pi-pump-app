@@ -221,6 +221,7 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
           ],
         ),
       ),
+    ),
     );
   }
 }
