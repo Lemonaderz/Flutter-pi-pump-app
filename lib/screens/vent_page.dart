@@ -19,6 +19,7 @@ class VentPage extends StatefulWidget {
 class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
   final TextEditingController textController = TextEditingController();
   late int displayText;
+  int selectedStrength = 0;
 
   @override
   void dispose() {
@@ -51,207 +52,277 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    const TopBanner(),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Stack(
-                        alignment: Alignment.topCenter,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () async {
-                                await appState.reset();
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: Container(
-                                width: 80,
-                                height: 60,
-                                alignment: Alignment.topLeft,
-                                child: Icon(
-                                  Icons.arrow_back_ios_new,
-                                  size: 20,
-                                  color: Color(0xFFA20202),
+                      const TopBanner(),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  await appState.reset();
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 60,
+                                  alignment: Alignment.topLeft,
+                                  child: Icon(
+                                    Icons.arrow_back_ios_new,
+                                    size: 20,
+                                    color: Color(0xFFA20202),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          BigCard(pair: pair),
-                        ],
+                            BigCard(pair: pair),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (appState.currentlyScanning || appState.connected) {
-                          var title = 'Currently Scanning';
-                          var content = 'Already scanning.';
-                          if (appState.connected) {
-                            title = 'Already Connected';
-                            content =
-                                'Device Already connected. If errors persist please restart the application.';
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (appState.currentlyScanning ||
+                              appState.connected) {
+                            var title = 'Currently Scanning';
+                            var content = 'Already scanning.';
+                            if (appState.connected) {
+                              title = 'Already Connected';
+                              content =
+                                  'Device Already connected. If errors persist please restart the application.';
+                            }
+                            context.showCustomAlert(title, content);
+                          } else {
+                            appState.getNext('Beginning');
+                            appState.discoverDevices();
                           }
-                          context.showCustomAlert(title, content);
-                        } else {
-                          appState.getNext('Beginning');
-                          appState.discoverDevices();
-                        }
-                      },
-                      child: const Text('Scan'),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: 240,
-                      height: 100,
-                      child: Image.asset('assets/images/lung2.webp'),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: 240,
-                      child: TextField(
-                        onTapOutside: (event) {
-                          FocusManager.instance.primaryFocus?.unfocus();
                         },
-                        controller: textController,
-                        decoration: const InputDecoration(
-                            labelText: 'Enter Respiratory Rate'),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
+                        child: const Text('Scan'),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: 240,
+                        height: 100,
+                        child: Image.asset('assets/images/lung2.webp'),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: 240,
+                        child: TextField(
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          controller: textController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter Respiratory Rate'),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          try {
+                            displayText = int.parse(textController.text);
+                            appState.changeSpeed(ubiqueDevice.id, displayText);
+                          } on FormatException {
+                            context.showCustomAlert('Input Issue',
+                                'Please only input numbers from 0-30.');
+                          } catch (e) {
+                            context.showCustomAlert('Not Connected',
+                                'Please connect before modifying respiratory rate.');
+                          }
+                        },
+                        child: const Text('Enter Respiratory Rate'),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          RateButton(rate: 10, appState: appState),
+                          RateButton(rate: 16, appState: appState),
+                          RateButton(rate: 20, appState: appState),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        try {
-                          displayText = int.parse(textController.text);
-                          appState.changeSpeed(ubiqueDevice.id, displayText);
-                        } on FormatException {
-                          context.showCustomAlert('Input Issue',
-                              'Please only input numbers from 0-30.');
-                        } catch (e) {
-                          context.showCustomAlert('Not Connected',
-                              'Please connect before modifying respiratory rate.');
-                        }
-                      },
-                      child: const Text('Enter Respiratory Rate'),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        RateButton(rate: 10, appState: appState),
-                        RateButton(rate: 16, appState: appState),
-                        RateButton(rate: 20, appState: appState),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ControlButtonColumn(
-                      stretchButtons: false,
-                      primaryButtons: [
-                        ControlButtonItem(
-                          label: 'Stop',
-                          icon: Icons.stop_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeSpeed(ubiqueDevice.id, 0);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying respiratory rate.');
-                            }
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Weak',
-                          icon: Icons.remove_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeStrength(ubiqueDevice.id, 1);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying respiratory rate.');
-                            }
-                          },
-                        ),
-                        ControlButtonItem(
-                          label: 'Strong',
-                          icon: Icons.add_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeStrength(ubiqueDevice.id, 0);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying respiratory rate.');
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(48.0, 16.0, 48.0, 20.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final buttonWidth = constraints.maxWidth > 600
-                        ? constraints.maxWidth * 0.5
-                        : constraints.maxWidth;
-                    return Center(
-                      child: SizedBox(
-                        width: buttonWidth,
+                      const SizedBox(height: 16),
+                      ControlButtonColumn(
+                        stretchButtons: false,
+                        primaryButtons: [
+                          ControlButtonItem(
+                            label: 'Stop',
+                            icon: Icons.stop_outlined,
+                            onPressed: () {
+                              if (appState.connected) {
+                                appState.changeSpeed(ubiqueDevice.id, 0);
+                              } else {
+                                context.showCustomAlert('Not Connected',
+                                    'Please connect before modifying respiratory rate.');
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 48.0),
                         child: Row(
                           children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                appState.reset();
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0,
-                                  vertical: 4.0,
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  if (appState.connected) {
+                                    appState.changeStrength(ubiqueDevice.id, 1);
+                                    setState(() {
+                                      selectedStrength = 1;
+                                    });
+                                  } else {
+                                    context.showCustomAlert('Not Connected',
+                                        'Please connect before modifying respiratory rate.');
+                                  }
+                                },
+                                icon: const Icon(Icons.circle, size: 10),
+                                label: const Text('Weak'),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: selectedStrength == 1
+                                      ? const Color(0xFFA20202)
+                                      : const Color(0xFF28303F),
+                                  side: BorderSide(
+                                    color: selectedStrength == 1
+                                        ? const Color(0xFFA20202)
+                                        : const Color(0xFFB8BEC8),
+                                    width: 1.5,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0,
+                                    vertical: 10.0,
+                                  ),
+                                  minimumSize: const Size.fromHeight(48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.1,
+                                  ),
                                 ),
                               ),
-                              child: const Text('Back'),
                             ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () {
-                                appState.launchURL(
-                                    'https://forms.gle/spvtjherXz3DNYiJ9');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0,
-                                  vertical: 4.0,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  if (appState.connected) {
+                                    appState.changeStrength(ubiqueDevice.id, 0);
+                                    setState(() {
+                                      selectedStrength = 0;
+                                    });
+                                  } else {
+                                    context.showCustomAlert('Not Connected',
+                                        'Please connect before modifying respiratory rate.');
+                                  }
+                                },
+                                icon: const Icon(Icons.circle, size: 14),
+                                label: const Text('Strong'),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: selectedStrength == 0
+                                      ? const Color(0xFFA20202)
+                                      : const Color(0xFF28303F),
+                                  side: BorderSide(
+                                    color: selectedStrength == 0
+                                        ? const Color(0xFFA20202)
+                                        : const Color(0xFFB8BEC8),
+                                    width: 1.5,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0,
+                                    vertical: 10.0,
+                                  ),
+                                  minimumSize: const Size.fromHeight(48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.1,
+                                  ),
                                 ),
                               ),
-                              child: const Text('Report Issue'),
                             ),
                           ],
                         ),
                       ),
-                    );
-                  },
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(48.0, 16.0, 48.0, 20.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final buttonWidth = constraints.maxWidth > 600
+                          ? constraints.maxWidth * 0.5
+                          : constraints.maxWidth;
+                      return Center(
+                        child: SizedBox(
+                          width: buttonWidth,
+                          child: Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  appState.reset();
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0,
+                                    vertical: 4.0,
+                                  ),
+                                ),
+                                child: const Text('Back'),
+                              ),
+                              const Spacer(),
+                              ElevatedButton(
+                                onPressed: () {
+                                  appState.launchURL(
+                                      'https://forms.gle/spvtjherXz3DNYiJ9');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0,
+                                    vertical: 4.0,
+                                  ),
+                                ),
+                                child: const Text('Report Issue'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
