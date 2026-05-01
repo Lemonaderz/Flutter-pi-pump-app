@@ -190,7 +190,7 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                               'Please connect before modifying respiratory rate.');
                         }
                       },
-                      child: const Text('Enter Respiratory Rate'),
+                      child: const Text('Start'),
                     ),
                     const SizedBox(height: 12),
                     Wrap(
@@ -198,30 +198,30 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        RateButton(rate: 10, appState: appState),
-                        RateButton(rate: 16, appState: appState),
-                        RateButton(rate: 20, appState: appState),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ControlButtonColumn(
-                        stretchButtons: false,
-                      primaryButtons: [
-                        ControlButtonItem(
-                          label: 'Stop',
-                          icon: Icons.stop_outlined,
-                          onPressed: () {
-                            if (appState.connected) {
-                              appState.changeSpeed(ubiqueDevice.id, 0);
-                            } else {
-                              context.showCustomAlert('Not Connected',
-                                  'Please connect before modifying respiratory rate.');
-                            }
+                        RateButton(
+                          rate: 10,
+                          appState: appState,
+                          onRateApplied: (value) {
+                            textController.text = value.toString();
                           },
                         ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
+                        RateButton(
+                          rate: 16,
+                          appState: appState,
+                          onRateApplied: (value) {
+                            textController.text = value.toString();
+                          },
+                        ),
+                        RateButton(
+                          rate: 20,
+                          appState: appState,
+                          onRateApplied: (value) {
+                            textController.text = value.toString();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 44),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 48.0),
                         child: Row(
@@ -313,6 +313,24 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 14),
+                    ControlButtonColumn(
+                        stretchButtons: false,
+                      primaryButtons: [
+                        ControlButtonItem(
+                          label: 'Stop',
+                          icon: Icons.stop_outlined,
+                          onPressed: () {
+                            if (appState.connected) {
+                              appState.changeSpeed(ubiqueDevice.id, 0);
+                            } else {
+                              context.showCustomAlert('Not Connected',
+                                  'Please connect before modifying respiratory rate.');
+                            }
+                          },
+                        ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                     ],

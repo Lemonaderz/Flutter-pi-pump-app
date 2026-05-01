@@ -6,12 +6,14 @@ class RateButton extends StatelessWidget {
   final int rate;
   final MyAppState appState;
   final bool compact;
+  final ValueChanged<int>? onRateApplied;
 
   const RateButton({
     super.key,
     required this.rate,
     required this.appState,
     this.compact = false,
+    this.onRateApplied,
   });
 
   @override
@@ -20,6 +22,7 @@ class RateButton extends StatelessWidget {
       onPressed: () {
         if (appState.connected) {
           appState.changeSpeed(ubiqueDevice.id, rate);
+          onRateApplied?.call(rate);
         } else {
           context.showCustomAlert('Not Connected', 'Please connect before modifying heart rate.');
         }

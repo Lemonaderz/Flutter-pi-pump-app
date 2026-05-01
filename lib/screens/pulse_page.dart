@@ -190,7 +190,7 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                 'Please connect before modifying heart rate.');
                           }
                         },
-                        child: const Text('Enter Heart Rate'),
+                        child: const Text('Start'),
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -199,36 +199,43 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                         runSpacing: 8,
                         children: [
                           RateButton(
-                              rate: 40, appState: appState, compact: true),
+                              rate: 40,
+                              appState: appState,
+                              compact: true,
+                              onRateApplied: (value) {
+                                textController.text = value.toString();
+                              }),
                           RateButton(
-                              rate: 60, appState: appState, compact: true),
+                              rate: 60,
+                              appState: appState,
+                              compact: true,
+                              onRateApplied: (value) {
+                                textController.text = value.toString();
+                              }),
                           RateButton(
-                              rate: 80, appState: appState, compact: true),
+                              rate: 80,
+                              appState: appState,
+                              compact: true,
+                              onRateApplied: (value) {
+                                textController.text = value.toString();
+                              }),
                           RateButton(
-                              rate: 100, appState: appState, compact: true),
+                              rate: 100,
+                              appState: appState,
+                              compact: true,
+                              onRateApplied: (value) {
+                                textController.text = value.toString();
+                              }),
                           RateButton(
-                              rate: 120, appState: appState, compact: true),
+                              rate: 120,
+                              appState: appState,
+                              compact: true,
+                              onRateApplied: (value) {
+                                textController.text = value.toString();
+                              }),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      ControlButtonColumn(
-                        stretchButtons: false,
-                        primaryButtons: [
-                          ControlButtonItem(
-                            label: 'Stop',
-                            icon: Icons.stop_outlined,
-                            onPressed: () {
-                              if (appState.connected) {
-                                appState.changeSpeed(ubiqueDevice.id, 0);
-                              } else {
-                                context.showCustomAlert('Not Connected',
-                                    'Please connect before modifying heart rate.');
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 44),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 48.0),
                         child: Row(
@@ -320,6 +327,24 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 14),
+                      ControlButtonColumn(
+                        stretchButtons: false,
+                        primaryButtons: [
+                          ControlButtonItem(
+                            label: 'Stop',
+                            icon: Icons.stop_outlined,
+                            onPressed: () {
+                              if (appState.connected) {
+                                appState.changeSpeed(ubiqueDevice.id, 0);
+                              } else {
+                                context.showCustomAlert('Not Connected',
+                                    'Please connect before modifying heart rate.');
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       
