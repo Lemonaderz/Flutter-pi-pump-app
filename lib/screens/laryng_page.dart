@@ -83,30 +83,85 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const TopBanner(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () async {
-                          appState.stopCheck = true;
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Container(
-                          width: 80,
-                          height: 60,
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Align(
                           alignment: Alignment.topLeft,
-                          child: const Icon(
-                            Icons.arrow_back_ios_new,
-                            size: 20,
-                            color: Color(0xFFA20202),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              appState.stopCheck = true;
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              alignment: Alignment.topLeft,
+                              child: const Icon(
+                                Icons.arrow_back_ios_new,
+                                size: 20,
+                                color: Color(0xFFA20202),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                                      side: BorderSide(),
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 24.0,
+                                      top: 16.0,
+                                      right: 24.0,
+                                      bottom: 16.0,
+                                    ),
+                                    title: const Text('Report Issue'),
+                                    content: const Text('Go to form to report issue?'),
+                                    actionsAlignment: MainAxisAlignment.center,
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => appState.launchURL(
+                                          'https://forms.gle/spvtjherXz3DNYiJ9',
+                                        ),
+                                        child: const Text('Yes'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: const Text('No'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              alignment: Alignment.topRight,
+                              child: const Icon(
+                                Icons.warning_amber_outlined,
+                                size: 25,
+                                color: Color(0xFFA20202),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
