@@ -102,18 +102,21 @@ class _VentPageState extends State<VentPage> with TickerProviderStateMixin {
                                     ),
                                     title: Text("Report Issue"),
                                     content:
-                                        Text("Go to form to report issue?"),
+                                        Text("Go to the form to report an issue?"),
                                     actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(
-                                        onPressed: () => appState.launchURL(
-                                            'https://forms.gle/spvtjherXz3DNYiJ9'),
-                                        child: const Text('Yes'),
-                                      ),
-                                      TextButton(
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
-                                        child: const Text('No'),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => appState.launchURL(
+                                            'https://forms.gle/spvtjherXz3DNYiJ9'),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const StadiumBorder(),
+                                        ),
+                                        child: const Text('Yes'),
                                       ),
                                     ],
                                   );
