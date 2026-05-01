@@ -131,18 +131,21 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                                       bottom: 16.0,
                                     ),
                                     title: const Text('Report Issue'),
-                                    content: const Text('Go to form to report issue?'),
+                                    content: const Text('Go to the form to report an issue?'),
                                     actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
                                         onPressed: () => appState.launchURL(
                                           'https://forms.gle/spvtjherXz3DNYiJ9',
                                         ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const StadiumBorder(),
+                                        ),
                                         child: const Text('Yes'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        child: const Text('No'),
                                       ),
                                     ],
                                   );
