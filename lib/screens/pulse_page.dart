@@ -19,6 +19,7 @@ class PulsePage extends StatefulWidget {
 class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
   final TextEditingController textController = TextEditingController();
   late int displayText;
+  int selectedStrength = 0;
 
   @override
   void dispose() {
@@ -225,33 +226,104 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                               }
                             },
                           ),
-                          ControlButtonItem(
-                            label: 'Weak',
-                            icon: Icons.remove_outlined,
-                            onPressed: () {
-                              if (appState.connected) {
-                                appState.changeStrength(ubiqueDevice.id, 1);
-                              } else {
-                                context.showCustomAlert('Not Connected',
-                                    'Please connect before modifying heart rate.');
-                              }
-                            },
-                          ),
-                          ControlButtonItem(
-                            label: 'Strong',
-                            icon: Icons.add_outlined,
-                            onPressed: () {
-                              if (appState.connected) {
-                                appState.changeStrength(ubiqueDevice.id, 0);
-                              } else {
-                                context.showCustomAlert('Not Connected',
-                                    'Please connect before modifying heart rate.');
-                              }
-                            },
-                          ),
                         ],
                       ),
-                    ]
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  if (appState.connected) {
+                                    appState.changeStrength(ubiqueDevice.id, 1);
+                                    setState(() {
+                                      selectedStrength = 1;
+                                    });
+                                  } else {
+                                    context.showCustomAlert('Not Connected',
+                                        'Please connect before modifying heart rate.');
+                                  }
+                                },
+                                icon: const Icon(Icons.circle, size: 10),
+                                label: const Text('Weak'),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: selectedStrength == 1
+                                      ? const Color(0xFFA20202)
+                                      : const Color(0xFF28303F),
+                                  side: BorderSide(
+                                    color: selectedStrength == 1
+                                        ? const Color(0xFFA20202)
+                                        : const Color(0xFFB8BEC8),
+                                    width: 1.5,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0,
+                                    vertical: 10.0,
+                                  ),
+                                  minimumSize: const Size.fromHeight(48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.1,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  if (appState.connected) {
+                                    appState.changeStrength(ubiqueDevice.id, 0);
+                                    setState(() {
+                                      selectedStrength = 0;
+                                    });
+                                  } else {
+                                    context.showCustomAlert('Not Connected',
+                                        'Please connect before modifying heart rate.');
+                                  }
+                                },
+                                icon: const Icon(Icons.circle, size: 14),
+                                label: const Text('Strong'),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: selectedStrength == 0
+                                      ? const Color(0xFFA20202)
+                                      : const Color(0xFF28303F),
+                                  side: BorderSide(
+                                    color: selectedStrength == 0
+                                        ? const Color(0xFFA20202)
+                                        : const Color(0xFFB8BEC8),
+                                    width: 1.5,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0,
+                                    vertical: 10.0,
+                                  ),
+                                  minimumSize: const Size.fromHeight(48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.1,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                    ],
                   ),
                 ),
               ),
