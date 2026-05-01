@@ -84,6 +84,31 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                 children: [
                   const TopBanner(),
                   const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () async {
+                          appState.stopCheck = true;
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Container(
+                          width: 80,
+                          height: 60,
+                          alignment: Alignment.topLeft,
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: Color(0xFFA20202),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -112,14 +137,6 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                             );
                           },
                           child: const Text('How to connect'),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            appState.stopCheck = true;
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Back'),
                         ),
                       ],
                     ),
