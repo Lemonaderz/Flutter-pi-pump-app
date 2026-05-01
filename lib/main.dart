@@ -1,5 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import 'providers/app_state.dart';
 import 'screens/landing_page.dart';
 
@@ -7,8 +9,49 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  static const double _tabletBreakpoint = 600.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _updateOrientationLock();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    _updateOrientationLock();
+  }
+
+  void _updateOrientationLock() {
+    final view = WidgetsBinding.instance.platformDispatcher.views.first;
+    final logicalWidth = view.physicalSize.width / view.devicePixelRatio;
+    final logicalHeight = view.physicalSize.height / view.devicePixelRatio;
+    final shortestSide =
+        logicalWidth < logicalHeight ? logicalWidth : logicalHeight;
+
+    if (shortestSide < _tabletBreakpoint) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +79,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-    }
+  }
 }
 
 class NoStretchScrollBehavior extends MaterialScrollBehavior {
