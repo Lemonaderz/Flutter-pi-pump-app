@@ -24,47 +24,54 @@ class LandingPage extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 60),
-                          AppMenuButton(
-                            label: 'Pulse App',
-                            imagePath: 'assets/images/heart-circle.png',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const PulsePage()),
-                              );
-                            },
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final buttonHeight = (constraints.maxHeight / 4.5).clamp(72.0, 180.0);
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                AppMenuButton(
+                                  label: 'Pulse App',
+                                  imagePath: 'assets/images/heart-circle.png',
+                                  buttonHeight: buttonHeight,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const PulsePage()),
+                                    );
+                                  },
+                                ),
+                                AppMenuButton(
+                                  label: 'Vent App',
+                                  imagePath: 'assets/images/lungs-circle.png',
+                                  buttonHeight: buttonHeight,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const VentPage()),
+                                    );
+                                  },
+                                ),
+                                AppMenuButton(
+                                  label: 'Video Laryngoscope',
+                                  imagePath: 'assets/images/laryng-circle.png',
+                                  buttonHeight: buttonHeight,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const MyLaryngPage()),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 25),
-                          AppMenuButton(
-                            label: 'Vent App',
-                            imagePath: 'assets/images/lungs-circle.png',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const VentPage()),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 25),
-                          AppMenuButton(
-                            label: 'Video Laryngoscope',
-                            imagePath: 'assets/images/laryng-circle.png',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const MyLaryngPage()),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                   const HomepageFooterWave(),

@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-  }
+    }
 }
 
 class NoStretchScrollBehavior extends MaterialScrollBehavior {
