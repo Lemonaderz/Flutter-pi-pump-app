@@ -31,6 +31,12 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
     final pair = appState.current;
+    final mediaQuery = MediaQuery.of(context);
+    final isTabletLandscape =
+        mediaQuery.size.shortestSide >= 600 &&
+        mediaQuery.orientation == Orientation.landscape;
+    final controlHorizontalPadding =
+        isTabletLandscape ? mediaQuery.size.width * 0.25 : 48.0;
     appState.requestPermission();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -46,14 +52,23 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
           child: Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const TopBanner(),
-                      const SizedBox(height: 20),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: isTabletLandscape
+                          ? const NeverScrollableScrollPhysics()
+                          : const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: isTabletLandscape ? 0.0 : 20.0,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const TopBanner(),
+                              const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Stack(
@@ -240,7 +255,9 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 44),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: controlHorizontalPadding,
+                        ),
                         child: Row(
                           children: [
                             Expanded(
@@ -333,7 +350,8 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 14),
                       ControlButtonColumn(
-                        stretchButtons: false,
+                        stretchButtons: isTabletLandscape,
+                        horizontalPadding: controlHorizontalPadding,
                         primaryButtons: [
                           ControlButtonItem(
                             label: 'Stop',
@@ -349,10 +367,13 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      
-                    ],
-                  ),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

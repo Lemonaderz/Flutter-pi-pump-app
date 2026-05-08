@@ -28,7 +28,6 @@ class ControlButtonColumn extends StatelessWidget {
 
   static const double _defaultHorizontalPadding = 48.0;
   static const double _regularSpacing = 14.0;
-  static const double _desktopWidthFactor = 0.5;
   static const double _primaryButtonMinHeight = 48.0;
   static const double _buttonBorderRadius = 9.0;
   static const double _compactButtonWidth = 148.0;
@@ -43,9 +42,6 @@ class ControlButtonColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final buttonWidth = constraints.maxWidth > 600
-            ? constraints.maxWidth * _desktopWidthFactor
-            : constraints.maxWidth;
         final buttons = _buildButtons(
           primaryButtons,
           minHeight: _primaryButtonMinHeight,
@@ -60,10 +56,10 @@ class ControlButtonColumn extends StatelessWidget {
             horizontalPadding,
             bottomPadding,
           ),
-          child: Center(
-            child: stretchButtons
+            child: Center(
+              child: stretchButtons
                 ? SizedBox(
-                    width: buttonWidth,
+                    width: double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: buttons,
@@ -104,14 +100,14 @@ class ControlButtonColumn extends StatelessWidget {
           ),
           child: SizedBox(
             width: stretchButtons ? double.infinity : _compactButtonWidth,
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                if (buttons[index].icon != null)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(buttons[index].icon, size: 18),
-                  ),
+                if (buttons[index].icon != null) ...[
+                  Icon(buttons[index].icon, size: 18),
+                  const SizedBox(width: 8),
+                ],
                 Text(
                   buttons[index].label,
                   textAlign: TextAlign.center,
