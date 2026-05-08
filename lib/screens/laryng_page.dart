@@ -119,19 +119,9 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(16)),
-                                      side: BorderSide(),
-                                    ),
-                                    contentPadding: const EdgeInsets.only(
-                                      left: 24.0,
-                                      top: 16.0,
-                                      right: 24.0,
-                                      bottom: 16.0,
-                                    ),
-                                    title: const Text('Report Issue'),
-                                    content: const Text('Go to the form to report an issue?'),
+                                  return AppAlertDialog(
+                                    title: 'Report Issue',
+                                    content: 'Go to the form to report an issue?',
                                     actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(

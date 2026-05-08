@@ -32,9 +32,9 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
     final appState = context.watch<MyAppState>();
     final pair = appState.current;
     final mediaQuery = MediaQuery.of(context);
+    final isTablet = mediaQuery.size.shortestSide >= 600;
     final isTabletLandscape =
-        mediaQuery.size.shortestSide >= 600 &&
-        mediaQuery.orientation == Orientation.landscape;
+        isTablet && mediaQuery.orientation == Orientation.landscape;
     final controlHorizontalPadding =
         isTabletLandscape ? mediaQuery.size.width * 0.25 : 48.0;
     appState.requestPermission();
@@ -55,20 +55,16 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return SingleChildScrollView(
-                      physics: isTabletLandscape
-                          ? const NeverScrollableScrollPhysics()
-                          : const ClampingScrollPhysics(),
+                      physics: const ClampingScrollPhysics(),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            bottom: isTabletLandscape ? 0.0 : 20.0,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const TopBanner(),
-                              const SizedBox(height: 20),
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const TopBanner(),
+                            const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Stack(
@@ -99,54 +95,86 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                             BigCard(pair: pair),
                             Align(
                               alignment: Alignment.topRight,
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () async {
-                                  showDialog(context: context, builder: (BuildContext context) {
-                                    return  AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(16)),
-                                      side: const BorderSide(),
-                                    ),
-                                    contentPadding: const EdgeInsets.only(
-                                      left: 24.0,
-                                      top: 16.0,
-                                      right: 24.0,
-                                      bottom: 16.0,
-                                    ),
-                                    title: Text("Report Issue"),
-                                    content:
-                                        Text("Go to the form to report an issue?"),
-                                    actionsAlignment: MainAxisAlignment.center,
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('Cancel'),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AppAlertDialog(
+                                            title: 'How To Use',
+                                            content:
+                                              '1. First, click scan. Wait until it says "Connected".\n'
+                                              '2. Second, enter a heart rate and click start. Alternatively, use one of the preset buttons.\n'
+                                              '3. If you want to change the strength, click weak/strong.\n'
+                                              '4. To stop, click stop.\n'
+                                              '5. If you have found an issue or bug, click the warning icon in the top right, to be sent to a report form',
+                                            actionsAlignment:
+                                                MainAxisAlignment.center,
+                                            actions: [
+                                              ElevatedButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 40,
+                                      height: 60,
+                                      alignment: Alignment.topRight,
+                                      child: const Icon(
+                                        Icons.help_outline,
+                                        size: 24,
+                                        color: Color(0xFFA20202),
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () => appState.launchURL(
-                                            'https://forms.gle/spvtjherXz3DNYiJ9'),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: const StadiumBorder(),
-                                        ),
-                                        child: const Text('Yes'),
-                                      ),
-                                    ],
-                                  );
-                                  });
-                                },
-                                child: Container(
-                                  width: 80,
-                                  height: 60,
-                                  alignment: Alignment.topRight,
-                                  child: Icon(
-                                    Icons.warning_amber_outlined,
-                                    size: 25,
-                                    color: Color(0xFFA20202),
+                                    ),
                                   ),
-                                ),
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () async {
+                                      showDialog(context: context, builder: (BuildContext context) {
+                                        return  AppAlertDialog(
+                                        title: "Report Issue",
+                                        content:
+                                            "Go to the form to report an issue?",
+                                        actionsAlignment: MainAxisAlignment.center,
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () => appState.launchURL(
+                                                'https://forms.gle/spvtjherXz3DNYiJ9'),
+                                            style: ElevatedButton.styleFrom(
+                                              shape: const StadiumBorder(),
+                                            ),
+                                            child: const Text('Yes'),
+                                          ),
+                                        ],
+                                      );
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 40,
+                                      height: 60,
+                                      alignment: Alignment.topRight,
+                                      child: const Icon(
+                                        Icons.warning_amber_outlined,
+                                        size: 25,
+                                        color: Color(0xFFA20202),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -368,8 +396,7 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                         ],
                       ),
                               const SizedBox(height: 16),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     );
