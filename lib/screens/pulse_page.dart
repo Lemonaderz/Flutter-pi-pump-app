@@ -104,23 +104,14 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AppAlertDialog(
+                                          return QuestionAlertDialog(
                                             title: 'How To Use',
                                             content:
-                                              '1. First, click scan. Wait until it says "Connected".\n'
-                                              '2. Second, enter a heart rate and click start. Alternatively, use one of the preset buttons.\n'
-                                              '3. If you want to change the strength, click weak/strong.\n'
-                                              '4. To stop, click stop.\n'
-                                              '5. If you have found an issue or bug, click the warning icon in the top right, to be sent to a report form',
-                                            actionsAlignment:
-                                                MainAxisAlignment.center,
-                                            actions: [
-                                              ElevatedButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
+                                              '1. Click Scan. Wait until it says "Connected".\n'
+                                              '2. Enter a heart rate and click Start. Alternatively, use one of the preset buttons.\n'
+                                              '3. If you want to change the strength, click Weak/Strong.\n'
+                                              '4. To stop, click Stop.\n'
+                                              '5. If you have found an issue or bug, click the warning icon in the top right to fill out a report form.',
                                           );
                                         },
                                       );
@@ -140,27 +131,27 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () async {
                                       showDialog(context: context, builder: (BuildContext context) {
-                                        return  AppAlertDialog(
-                                        title: "Report Issue",
-                                        content:
-                                            "Go to the form to report an issue?",
-                                        actionsAlignment: MainAxisAlignment.center,
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () => appState.launchURL(
-                                                'https://forms.gle/spvtjherXz3DNYiJ9'),
-                                            style: ElevatedButton.styleFrom(
-                                              shape: const StadiumBorder(),
+                                        return WarningActionDialog(
+                                          title: "Report Issue",
+                                          content:
+                                              "Go to the form to report an issue?",
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('Cancel'),
                                             ),
-                                            child: const Text('Yes'),
-                                          ),
-                                        ],
-                                      );
+                                            const SizedBox(width: 12),
+                                            ElevatedButton(
+                                              onPressed: () => appState.launchURL(
+                                                  'https://forms.gle/spvtjherXz3DNYiJ9'),
+                                              style: ElevatedButton.styleFrom(
+                                                shape: const StadiumBorder(),
+                                              ),
+                                              child: const Text('Yes'),
+                                            ),
+                                          ],
+                                        );
                                       });
                                     },
                                     child: Container(
@@ -168,7 +159,7 @@ class _PulsePageState extends State<PulsePage> with TickerProviderStateMixin {
                                       height: 60,
                                       alignment: Alignment.topRight,
                                       child: const Icon(
-                                        Icons.warning_amber_outlined,
+                                        Icons.warning_amber_rounded,
                                         size: 25,
                                         color: Color(0xFFA20202),
                                       ),

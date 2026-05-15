@@ -119,15 +119,15 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return AppAlertDialog(
+                                  return WarningActionDialog(
                                     title: 'Report Issue',
                                     content: 'Go to the form to report an issue?',
-                                    actionsAlignment: MainAxisAlignment.center,
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.of(context).pop(),
                                         child: const Text('Cancel'),
                                       ),
+                                      const SizedBox(width: 12),
                                       ElevatedButton(
                                         onPressed: () => appState.launchURL(
                                           'https://forms.gle/spvtjherXz3DNYiJ9',
@@ -147,7 +147,7 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                               height: 60,
                               alignment: Alignment.topRight,
                               child: const Icon(
-                                Icons.warning_amber_outlined,
+                                Icons.warning_amber_rounded,
                                 size: 25,
                                 color: Color(0xFFA20202),
                               ),
