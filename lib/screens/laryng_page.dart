@@ -179,12 +179,18 @@ class _MyLaryngPageState extends State<MyLaryngPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            context.showCustomAlert(
-                              'Connection Guide',
-                              'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after Laryngoscope startup',
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const QuestionAlertDialog(
+                                  title: 'Connection Guide',
+                                  content:
+                                      'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after laryngoscope startup.',
+                                );
+                              },
                             );
                           },
-                          child: const Text('How to connect'),
+                          child: const Text('How to Connect'),
                         ),
                       ],
                     ),
