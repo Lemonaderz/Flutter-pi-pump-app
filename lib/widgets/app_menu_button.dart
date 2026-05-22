@@ -13,7 +13,7 @@ class AppMenuButton extends StatelessWidget {
     this.buttonHeight,
   });
 
-  static const double _buttonWidth = 190.0;
+  static const double _buttonWidth = 260.0;
   static const double _minButtonHeight = 52.0;
   static const double _maxButtonHeight = 180.0;
   static const double _iconHeightFactor = 0.55;
@@ -58,7 +58,7 @@ class AppMenuButton extends StatelessWidget {
               Positioned(
                 top: labelTop,
                 child: SizedBox(
-                  width: 260,
+                  width: _buttonWidth,
                   child: Text(
                     label,
                     textAlign: TextAlign.center,
