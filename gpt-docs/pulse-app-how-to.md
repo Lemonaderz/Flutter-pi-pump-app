@@ -1,32 +1,115 @@
 # Pulse App
 
-An app for connecting to and controlling the pulse of an arterial line training model.
+The Pulse App connects to an arterial line training model and controls its pulse rate and pulse strength.
 
-From the home screen, select the **Pulse App** button to enter the Pulse App. The Pulse App screen contains the following features:
+Use this document as a support reference for answering user questions about how the Pulse App works.
 
-- **Back arrow/button (< icon)** in the top left-hand corner. This takes the user back to the home screen.
-- **Status indicator text** in the top middle of the screen. This displays the following statuses:
-    1. "Ready" - when the Pulse App is first opened, and no connecting is happening yet.
-    2. "Scanning" - when the **Scan** button is clicked. This is shown while the app is finding the peripheral device (the arterial line training model).
-    3. "Connecting" - when the peripheral device has been found, and is being connected to.
-    4. "Connected" - when the peripheral device is successfully connected.
-- **Help button (? icon)** in the top right-hand corner. Clicking this displays a "How to Use" dialog box/pop-up, with simple usage instructions for the Pulse App.
-- **Report issue button (! icon)** in the top right-hand corner, next to the Help button. Clicking this displays a "Report Issue" dialog box/pop-up, with a button that takes the user to an online form to report an issue. The dialog says "Go to the form to report an issue?", and has buttons **Cancel** and **Yes**.
-- **Scan button** to start scanning for the peripheral device.
-- **Enter Heart Rate text input** in the middle of the screen. The user can type numbers into this input to specify a heart rate which the arterial line training model will use.
-- **Start button** which starts the pulse in the arterial line training model. This starts it with whatever heart rate is inputted into the text input. If a heart rate is not provided or is invalid, an "Input Issue" dialog box will be displayed, saying "Please only input numbers from 40-120".
-- **Specific heart rate option buttons** including 40, 60, 80, 100 and 120. These are under the Start button. Clicking one of these immediately starts or updates the training model with the selected pulse, and also fills the selected pulse into the Heart Rate text input.
-- **Weak and Strong buttons**. The currently selected one is coloured red, while the unselected one is coloured grey. Selecting one changes the pulse immediately to that setting. The **Strong** button is selected initially by default.
-- **Stop button** at the bottom of the screen. This stops the pulse in the arterial line training model if it is going.
+## What the Pulse App Does
 
-**NOTE:** Selecting the specific heart rate option buttons, Weak, Strong, or Stop buttons while not connected to the peripheral devices causes a **Not Connected** dialog box to be displayed, telling the user "Please connect before modifying heart rate".
+- The user opens the Pulse App from the home screen by tapping **Pulse App**.
+- The app scans for and connects to the arterial line training model over Bluetooth.
+- Once connected, the user can start, change, or stop the pulse.
 
-**NOTE:** The Pulse App uses Bluetooth to connect to peripheral devices, so make sure your Bluetooth is turned on/enabled on your mobile device/tablet.
+## Screen Elements
 
-## How to Use the Pulse App
+### Top Bar
 
-1. Click **Scan**. Wait until the status says "Connected".
-2. Enter a heart rate and click **Start**. Alternatively, use one of the preset buttons.
-3. If you want to change the strength, click **Weak**/**Strong**.
-4. To stop, click **Stop**.
-5. If you have found an issue or bug, click the warning icon in the top right to fill out a report form.
+- **Back arrow (< icon):** Returns to the home screen.
+- **Status text:** Shows the current connection state.
+- **Help button (? icon):** Opens a "How to Use" dialog with basic instructions.
+- **Report issue button (! icon):** Opens a "Report Issue" dialog.
+
+### Main Controls
+
+- **Scan button:** Starts scanning for the arterial line training model.
+- **Heart Rate input:** Lets the user type a heart rate.
+- **Start button:** Starts the pulse using the value in the Heart Rate input.
+- **Preset heart rate buttons:** `40`, `60`, `80`, `100`, `120`.
+- **Strength buttons:** **Weak** and **Strong**.
+- **Stop button:** Stops the pulse.
+
+## Status Text Meanings
+
+- **Ready:** The Pulse App has been opened and no scan or connection is currently in progress.
+- **Scanning:** The app is searching for the arterial line training model.
+- **Connecting:** The training model has been found and the app is attempting to connect.
+- **Connected:** The app is successfully connected to the training model.
+
+## How Each Control Behaves
+
+### Scan
+
+- Tapping **Scan** starts searching for the arterial line training model.
+- The user should wait until the status text shows **Connected** before trying to change pulse settings.
+
+### Heart Rate Input and Start
+
+- The user can type a number into the **Heart Rate** input.
+- Tapping **Start** starts the pulse at the entered heart rate.
+- Valid heart rate values are numbers from `40` to `120`.
+
+If the user taps **Start** with no value entered, or with an invalid value, the app shows this dialog:
+
+- **Dialog title:** `Input Issue`
+- **Dialog message:** `Please only input numbers from 40-120`
+
+### Preset Heart Rate Buttons
+
+- The preset buttons are `40`, `60`, `80`, `100`, and `120`.
+- Tapping one of these buttons immediately starts or updates the pulse to that value.
+- The tapped preset value is also filled into the Heart Rate input.
+
+### Weak and Strong
+
+- The strength options are **Weak** and **Strong**.
+- **Strong** is selected by default when the Pulse App first opens.
+- The selected strength button is red.
+- The unselected strength button is grey.
+- Tapping **Weak** or **Strong** changes the pulse strength immediately.
+
+### Stop
+
+- Tapping **Stop** stops the pulse.
+
+## Not Connected Behavior
+
+If the user tries to use any of these controls before connecting:
+
+- a preset heart rate button
+- **Weak**
+- **Strong**
+- **Stop**
+
+the app shows this dialog:
+
+- **Dialog title:** `Not Connected`
+- **Dialog message:** `Please connect before modifying heart rate`
+
+## Report Issue Dialog
+
+When the user taps the **Report issue** button:
+
+- a dialog opens asking: `Go to the form to report an issue?`
+- the dialog has two buttons: **Cancel** and **Yes**
+- choosing **Yes** takes the user to an online issue report form
+
+## Bluetooth Requirement
+
+- The Pulse App uses Bluetooth to connect to the training model.
+- Bluetooth must be enabled on the user's phone or tablet for scanning and connection to work.
+
+## Quick How-To
+
+1. Open **Pulse App** from the home screen.
+2. Tap **Scan**.
+3. Wait until the status text says **Connected**.
+4. Enter a heart rate and tap **Start**, or tap a preset heart rate button.
+5. If needed, tap **Weak** or **Strong** to change strength.
+6. Tap **Stop** when you want to stop the pulse.
+7. If needed, tap the **!** icon to report an issue.
+
+## Support Answering Notes
+
+- If a user says the controls are not working, first check whether the app status says **Connected**.
+- If a user gets an input error, confirm they entered numbers only and that the value is between `40` and `120`.
+- If a user cannot find the device, remind them that Bluetooth must be turned on.
