@@ -61,7 +61,7 @@ SPEC CHECKSUMS:
   reactive_ble_mobile: 856183aeda09f2a676bbaecbea8915c3cb1d33df
   SwiftProtobuf: 4dbaffec76a39a8dc5da23b40af1a5dc01a4c02d
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
+  webview_flutter_wkwebview: a4af96a051138e28e29f60101d094683b9f82188
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
 
 PODFILE CHECKSUM: 80cc6158ecbd5b5596c9a79d23d454cf0c9b34e0
