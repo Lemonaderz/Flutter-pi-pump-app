@@ -1,7 +1,7 @@
 name: flutter_pi_2
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 13.1.1+13
 
@@ -34,7 +34,9 @@ flutter:
   assets:
     - assets/images/croppedlogo.png
     - assets/images/heartrate.gif
-    - assets/images/lung.gif
-    - assets/images/giphy.webp
     - assets/images/lung2.webp
     - assets/images/laryng.png
+    - assets/images/heart-circle.png
+    - assets/images/lungs-circle.png
+    - assets/images/laryng-circle.png
+    - assets/images/footer-wave.png

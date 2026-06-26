@@ -1,0 +1,206 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_state.dart';
+import '../widgets/alert_dialog.dart';
+import '../widgets/swipe_back_wrapper.dart';
+import '../widgets/top_banner.dart';
+
+class MyLaryngPage extends StatefulWidget {
+  const MyLaryngPage({super.key});
+
+  @override
+  State<MyLaryngPage> createState() => _MyLaryngPageState();
+}
+
+class _MyLaryngPageState extends State<MyLaryngPage> {
+  late final WebViewController _controller;
+  late final MyAppState _appState;
+  bool _isAppStateInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {},
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('http://192.168.0.1:8081'));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isAppStateInitialized) {
+      _appState = context.read<MyAppState>();
+      _isAppStateInitialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _appState.stopCheck = false;
+        _appState.runCheck(_controller);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _appState.stopCheck = true;
+    super.dispose();
+  }
+
+  void intiWifi() async {}
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: SwipeBackWrapper(
+          onBack: () async {
+            appState.stopCheck = true;
+            Navigator.pop(context);
+          },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const padding = 20.0;
+              final maxWidth = constraints.maxWidth - padding * 2;
+              final maxHeight = constraints.maxHeight - 150; // estimate for image and buttons
+              final squareSize = maxWidth < maxHeight ? maxWidth : maxHeight;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const TopBanner(),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              appState.stopCheck = true;
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              alignment: Alignment.topLeft,
+                              child: const Icon(
+                                Icons.arrow_back_ios_new,
+                                size: 20,
+                                color: Color(0xFFA20202),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return WarningActionDialog(
+                                    title: 'Report Issue',
+                                    content: 'Go to the form to report an issue?',
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      ElevatedButton(
+                                        onPressed: () => appState.launchURL(
+                                          'https://forms.gle/spvtjherXz3DNYiJ9',
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const StadiumBorder(),
+                                        ),
+                                        child: const Text('Yes'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              alignment: Alignment.topRight,
+                              child: const Icon(
+                                Icons.warning_amber_rounded,
+                                size: 25,
+                                color: Color(0xFFA20202),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: Container(
+                          width: squareSize,
+                          height: squareSize,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2),
+                          ),
+                          child: WebViewWidget(controller: _controller),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const QuestionAlertDialog(
+                                  title: 'Connection Guide',
+                                  content:
+                                      'Please connect to the SIM3D Wifi network.\n\nThe Wifi password is: \n\nsim3d123\n\nPlease allow some time for the SIM3D wifi to appear after laryngoscope startup.',
+                                );
+                              },
+                            );
+                          },
+                          child: const Text('How to Connect'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
